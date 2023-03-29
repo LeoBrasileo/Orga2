@@ -23,15 +23,17 @@ uint64_t top(stack_t *stack)
 */
 void push(stack_t *stack, uint64_t data)
 {
-    stack->esp = stack->esp - 1;
-    *stack->esp = data;
+    if (stack->esp >= stack->_stackMem){
+        *(--stack->esp) = data;
+    }
 }
 
 stack_t * createStack(size_t size)
 {
-    stack_t *stack = malloc(size);
+    stack_t *stack = malloc(sizeof(stack_t));
 
-    stack->_stackMem = size;
+    // Asignamos en stackMem toodos los espacios posibles de expansion del stack
+    stack->_stackMem = malloc(size * sizeof(uint64_t));
 
     stack->ebp = stack->_stackMem + size - 1;  // La base del stack es la dirección numéricamente más grande.
     stack->esp = stack->ebp;  // Al comienzo, la base y el tope coinciden

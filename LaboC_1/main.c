@@ -28,9 +28,8 @@ int main()
     student_t *st1p = &stud1;
     studentp_t *st2p = &stud2;
 
-    stack->push(&stack, st1p);
-    stack->push(&stack, st2p);
-
+    stack->push(stack, st1p);
+    stack->push(stack, st2p);
 
 
     // Una "lista" de profesores:
