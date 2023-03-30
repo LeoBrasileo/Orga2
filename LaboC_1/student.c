@@ -12,7 +12,7 @@ void printStudent(student_t *stud){
         printf("%hnu ", stud->califications);
     }
     printf("\n");
-    printf("Concept: %hd\n", stud->concept);
+    printf("Concepto: %hd\n", stud->concept);
 }
 
 void printStudentp(studentp_t *stud){
@@ -23,6 +23,6 @@ void printStudentp(studentp_t *stud){
         printf("%hnu ", stud->califications);
     }
     printf("\n");
-    printf("Concept: %hd\n", stud->concept);
+    printf("Concepto: %hd\n", stud->concept);
 
 }
