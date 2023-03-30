@@ -28,9 +28,9 @@ int main()
     student_t *st1p = &stud1;
     studentp_t *st2p = &stud2;
 
+    //Pushear en la pila ambos estudiantes
     stack->push(stack, st1p);
     stack->push(stack, st2p);
-
 
     // Una "lista" de profesores:
     teacher_t *teachers = malloc(3*sizeof(teacher_t));
@@ -40,6 +40,7 @@ int main()
     teachers[0].name = "Alejandro Furfaro";
     printf("Nombre del profesor: %s\n", ((teacher_t *) stack->top(stack))[0].name);
 
+    //Imprimir estudiantes 1 y 2 desde la pila
     studentp_t *prof = stack->pop(&stack);
     student_t *stud = stack->pop(&stack);
 

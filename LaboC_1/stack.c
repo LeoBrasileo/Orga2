@@ -6,7 +6,7 @@
 uint64_t pop(stack_t *stack)
 {
     uint64_t ult = *(stack->esp);
-    stack->esp = stack->esp + 1;
+    stack->esp = stack->esp++;
     return ult;
 }
 
@@ -48,9 +48,9 @@ stack_t * createStack(size_t size)
 void deleteStack(stack_t *stack)
 {
     uint64_t *act = stack->_stackMem;
-    for (uint16_t i = act; act != stack->ebp; i++)
-    {
+    while(act != stack->ebp){
         free(act);
+        act++;
     }
     free(stack->_stackMem);
     free(stack);
