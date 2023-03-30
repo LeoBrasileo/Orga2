@@ -44,11 +44,14 @@ int main()
     //Imprimir estudiantes 1 y 2 desde la pila
     //sacamos teacher
     stack->pop(stack);
+    free(teachers);
 
     studentp_t *st1 = stack->pop(stack);
     printStudentp(st1);
     student_t *st2 = stack->pop(stack);
     printStudent(st2);
+
+    deleteStack(stack);
 
     return 0;
 }
