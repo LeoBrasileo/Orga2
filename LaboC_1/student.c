@@ -4,16 +4,25 @@
 #include <stdio.h>
 
 
-void printStudent(student_t *stud)
-{
-    /* Imprime por consola una estructura de tipo student_t
-    */
-
+void printStudent(student_t *stud){
+    printf("nombre del estudiante: %s\n", stud->name);
+    printf("dni del estudiante: %u\n", stud->dni);
+    printf("calificaciones: ");
+    for(size_t i = 0; i < NUM_CALIFICATIONS; i++){
+        printf("%hnu ", stud->califications);
+    }
+    printf("\n");
+    printf("Concept: %hd\n", stud->concept);
 }
 
-void printStudentp(studentp_t *stud)
-{
-    /* Imprime por consola una estructura de tipo studentp_t
-    */
+void printStudentp(studentp_t *stud){
+    printf("nombre del estudiante: %s\n", stud->name);
+    printf("dni del estudiante: %u\n", stud->dni);
+    printf("calificaciones: ");
+    for(size_t i = 0; i < NUM_CALIFICATIONS; i++){
+        printf("%hnu ", stud->califications);
+    }
+    printf("\n");
+    printf("Concept: %hd\n", stud->concept);
 
 }
