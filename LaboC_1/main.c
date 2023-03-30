@@ -42,10 +42,13 @@ int main()
     printf("Nombre del profesor: %s\n", ((teacher_t *) stack->top(stack))[0].name);
 
     //Imprimir estudiantes 1 y 2 desde la pila
-    studentp_t *prof = stack->pop(&stack);
-    printStudentp(prof);
-    student_t *stud = stack->pop(&stack);
-    printStudent(stud);
+    //sacamos teacher
+    stack->pop(stack);
+
+    studentp_t *st1 = stack->pop(stack);
+    printStudentp(st1);
+    student_t *st2 = stack->pop(stack);
+    printStudent(st2);
 
     return 0;
 }

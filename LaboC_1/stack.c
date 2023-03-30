@@ -6,7 +6,7 @@
 uint64_t pop(stack_t *stack)
 {
     uint64_t ult = *(stack->esp);
-    stack->esp = stack->esp++;
+    stack->esp++;
     return ult;
 }
 
