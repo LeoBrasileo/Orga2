@@ -38,31 +38,26 @@ alternate_sum_4:
 ; uint32_t alternate_sum_4_using_c(uint32_t x1, uint32_t x2, uint32_t x3, uint32_t x4);
 ; registros: x1[rdi], x2[rsi], x3[rdx], x4[rcx]
 alternate_sum_4_using_c:
-	;obs: restar y sumar en C usan los registros rax = x1 y rdx = x2
-	;prologo
-	push rbp ; alineado a 16
-	mov rbp, rsp
-	sub rsp, 8
+    ; prologo
+    push rbp
+    mov rbp, rsp
+    sub rsp, 8
 
-	mov r9, rdx ; guardo x3 en r9
-
-	; llamamos a las funciones sumar_c y restar_c
-	mov rax, rdi ; x1
-	mov rdx, rsi ; x2
-	call restar_c
-	;queda guardado x1 - x2 en rax
-
-	mov rdx, r9 ; x3
-	call sumar_c
-
-	mov rdx, rcx
 	call restar_c
 
+	mov rdi, rax
+	mov rsi, rdx
+	call sumar_c ; sumar_c(x1-x2, x3)
 
-	;epilogo
+	mov rdi, rax
+	mov rsi, rcx
+	call restar_c ; restar_c(x1-x2+x3, x4)
+
+    
+    ; epilogo
 	mov rsp,rbp
-	pop rbp
-	ret
+    pop rbp
+    ret
 
 
 
