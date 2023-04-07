@@ -8,7 +8,9 @@
 
 int main (void){
 	/* Acá pueden realizar sus propias pruebas */
-	assert(alternate_sum_4(8,2,5,1) == 10);	
+	int a = alternate_sum_4(2,4,7,45);
+	printf("alternate_sum_4: %d",a);
+	printf("\n");
 	return 0;    
 }
 

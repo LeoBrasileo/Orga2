@@ -16,16 +16,23 @@ global alternate_sum_4_using_c
 
 ;########### DEFINICION DE FUNCIONES
 ; uint32_t alternate_sum_4(uint32_t x1, uint32_t x2, uint32_t x3, uint32_t x4);
-; registros: x1[?], x2[?], x3[?], x4[?]
+; registros: x1[rdi], x2[rsi], x3[rdx], x4[rcx]
 alternate_sum_4:
 	;prologo
-	; COMPLETAR
+	push rbp
+	mov rbp,rsp
+	sub rsp, 8 ;reservar espacio para 2 enteros mas en la pila
 
 	;recordar que si la pila estaba alineada a 16 al hacer la llamada
 	;con el push de RIP como efecto del CALL queda alineada a 8
+	mov rax, rdi ; mover x1 a eax
+	sub rax, rsi ; restar x2 a eax
+	add rax, rdx ; sumar x3 a eax
+	sub rax, rcx ; restar x4 a eax
 
 	;epilogo
-	; COMPLETAR
+	mov rsp,rbp
+	pop rbp
 	ret
 
 ; uint32_t alternate_sum_4_using_c(uint32_t x1, uint32_t x2, uint32_t x3, uint32_t x4);
