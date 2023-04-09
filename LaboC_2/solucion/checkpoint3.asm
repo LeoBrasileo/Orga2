@@ -10,18 +10,28 @@ global complex_sum_z
 global packed_complex_sum_z
 global product_9_f
 
+%define off_z 24
+
 ;########### DEFINICION DE FUNCIONES
 ;extern uint32_t complex_sum_z(complex_item *arr, uint32_t arr_length);
-;registros: arr[?], arr_length[?]
+;registros: arr[rdi], arr_length[rsi]
+;z esta en el byte 24 de la estructura
 complex_sum_z:
-	;prologo
-
-	mov ecx, 99 ; carga la cantidad de iteraciones a hacer al contador de vueltas
-	.cycle:     ; etiqueta a donde retorna el ciclo que itera sobre arr
-	loop .cycle ; decrementa ecx y si es distinto de 0 salta a .cycle
-
-	;epilogo
-	ret
+    mov rax, 0; res = suma = 0
+    mov rcx, 0; contador = 0
+    
+loop_start:
+	; si contador = arr_length, terminar
+    cmp rcx, rsi;
+    je loop_end; 
+    
+    mov rdx, [rdi+rcx+off_z] ; Cargar el atributo z del complex_item actual
+    add rax, rdx     ; Sumar el atributo z al acumulador
+    
+    inc rcx          ; Incrementar el contador del ciclo
+    jmp loop_start   ; Volver al inicio del ciclo
+loop_end:
+    ret
 
 ;extern uint32_t packed_complex_sum_z(packed_complex_item *arr, uint32_t arr_length);
 ;registros: arr[?], arr_length[?]
