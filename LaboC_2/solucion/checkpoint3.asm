@@ -75,7 +75,7 @@ product_9_f:
 	cvtss2sd xmm6, xmm6
 	cvtss2sd xmm7, xmm7
 
-	mov xmm8, [rbp+0x32] ; cargamos f9 en xmm8
+	movd xmm8, [rbp+0x32] ; cargamos f9 en xmm8
 	cvtss2sd xmm8, xmm8
 
 	;multiplicamos los doubles en xmm0 <- xmm0 * xmm1, xmmo * xmm2 , ...
@@ -109,7 +109,11 @@ product_9_f:
 	mulsd xmm0, xmm8
 	mulsd xmm0, xmm9
 
+	; guardamos el resultado en el destino
+	movd [rdi], xmm0
+
 	; epilogo
+	mov rsp, rbp
 	pop rbp
 	ret
 
