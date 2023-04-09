@@ -11,6 +11,9 @@ global packed_complex_sum_z
 global product_9_f
 
 %define off_z 24
+%define size_complex_item 32
+%define off_z_packed 20
+%define size_complex_item_packed 24
 
 ;########### DEFINICION DE FUNCIONES
 ;extern uint32_t complex_sum_z(complex_item *arr, uint32_t arr_length);
@@ -24,8 +27,9 @@ loop_start:
 
     mov rdx, [rdi+off_z] ; Cargar el atributo z del complex_item actual
     add rax, rdx     ; Sumar el atributo z al acumulador
-    add rdi , 32; avanzar al siguiente elemento
+    add rdi , size_complex_item; avanzar al siguiente elemento
 
+	; loop decrementa rcx y salta a loop_start si rcx != 0
 	loop loop_start
 
 loop_end:
@@ -34,7 +38,19 @@ loop_end:
 ;extern uint32_t packed_complex_sum_z(packed_complex_item *arr, uint32_t arr_length);
 ;registros: arr[?], arr_length[?]
 packed_complex_sum_z:
-	ret
+    mov rax, 0; res = suma = 0
+    mov rcx, rsi; contador = 0
+    
+pack_loop_start:
+
+    mov rdx, [rdi+off_z_packed] ; Cargar el atributo z del complex_item actual
+    add rax, rdx     ; Sumar el atributo z al acumulador
+    add rdi , size_complex_item_packed; avanzar al siguiente elemento
+
+	; loop decrementa rcx y salta a loop_start si rcx != 0
+	loop pack_loop_start
+
+    ret
 
 
 ;extern void product_9_f(uint32_t * destination
