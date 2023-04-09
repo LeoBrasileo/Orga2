@@ -47,10 +47,10 @@ int main (void){
 	printf("packed complex sum z : %d",zp);
 	printf("\n");
 
-	double m2 = -1;
+	double m2 = 1;
 	product_9_f(&m2, 12, 2.4, 2, 3.2, 3, 5.2, 1, 6.2, 2, 7.2, 3, 8.2, 1, 9.2, 2, 1.1, 1, 5.5);
 	//prueba deberia dar 703006833.3
-	printf("multiplciacion doble : %d",m2);
+	printf("multiplciacion doble : %f",m2);
 	printf("\n");
 
 	return 0;    
