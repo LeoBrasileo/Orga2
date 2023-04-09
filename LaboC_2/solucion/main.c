@@ -34,7 +34,7 @@ int main (void){
 	arr[1].z = 1;
 	arr[2].z = 1;
 	arr[3].z = 1;
-	int z = complex_sum_z(&arr, 4);
+	int z = complex_sum_z(&arr[0], 4);
 	printf("complex sum z : %d",z);
 	printf("\n");
 

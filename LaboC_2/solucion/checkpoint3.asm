@@ -18,18 +18,16 @@ global product_9_f
 ;z esta en el byte 24 de la estructura
 complex_sum_z:
     mov rax, 0; res = suma = 0
-    mov rcx, 0; contador = 0
+    mov rcx, rsi; contador = 0
     
 loop_start:
-	; si contador = arr_length, terminar
-    cmp rcx, rsi;
-    je loop_end; 
-    
-    mov rdx, [rdi+rcx+off_z] ; Cargar el atributo z del complex_item actual
+
+    mov rdx, [rdi+off_z] ; Cargar el atributo z del complex_item actual
     add rax, rdx     ; Sumar el atributo z al acumulador
-    
-    inc rcx          ; Incrementar el contador del ciclo
-    jmp loop_start   ; Volver al inicio del ciclo
+    add rdi , 32; avanzar al siguiente elemento
+
+	loop loop_start
+
 loop_end:
     ret
 
