@@ -58,14 +58,17 @@ pack_loop_start:
 ; , uint32_t x9, float f9);
 ; registros y pila: destination[rdi], x1[rsi], f1[xmm0], x2[rdx], f2[xmm1], x3[rcx], f3[xmm2], x4[r8], f4[xmm3]
 ; 	, x5[r9], f5[xmm4], x6[rbp+0x10], f6[xmm5], x7[rbp+0x18], f7[xmm6], x8[rbp+0x20], f8[xmm7],
-; 	, x9[rbp+0x28], f9[rbp+0x32]
+; 	, x9[rbp+0x28], f9[rbp+0x30]
 product_9_f:
 	;prologo
 	push rbp
 	mov rbp, rsp
 	sub rsp, 32 ; reservamos espacio para los parametros restantes
 
-	;convertimos los flotantes de cada registro xmm en doubles
+	mov rax, 1
+	cvtsi2sd xmm9, rax
+
+	; convertir todos los floats a doubles
 	cvtss2sd xmm0, xmm0
 	cvtss2sd xmm1, xmm1
 	cvtss2sd xmm2, xmm2
@@ -74,43 +77,40 @@ product_9_f:
 	cvtss2sd xmm5, xmm5
 	cvtss2sd xmm6, xmm6
 	cvtss2sd xmm7, xmm7
+	cvtss2sd xmm8, [rbp + 0x30]
 
-	movd xmm8, [rbp+0x32] ; cargamos f9 en xmm8
-	cvtss2sd xmm8, xmm8
+	; multiplicar todos los xmm
+	mulsd xmm9, xmm0 ; f1 * 1
+	mulsd xmm9, xmm1 ; f1 * f2
+	mulsd xmm9, xmm2 ; f1 * f2 * f3
+	mulsd xmm9, xmm3 ; f1 * f2 * f3 * f4
+	mulsd xmm9, xmm4 ; f1 * f2 * f3 * f4 * f5
+	mulsd xmm9, xmm5 ; f1 * f2 * f3 * f4 * f5 * f6
+	mulsd xmm9, xmm6 ; f1 * f2 * f3 * f4 * f5 * f6 * f7
+	mulsd xmm9, xmm7 ; f1 * f2 * f3 * f4 * f5 * f6 * f7 * f8
+	mulsd xmm9, xmm8 ; f1 * f2 * f3 * f4 * f5 * f6 * f7 * f8 * f9
 
-	;multiplicamos los doubles en xmm0 <- xmm0 * xmm1, xmmo * xmm2 , ...
-	mulsd xmm0, xmm1
-	mulsd xmm0, xmm2
-	mulsd xmm0, xmm3
-	mulsd xmm0, xmm4
-	mulsd xmm0, xmm5
-	mulsd xmm0, xmm6
-	mulsd xmm0, xmm7
-	mulsd xmm0, xmm8
+	; multiplicar res por todos los enteros
+	cvtsi2sd xmm10, rsi ; x1 a xmm10 como double
+	mulsd xmm9, xmm10 ; res * x1
+	cvtsi2sd xmm10, rdx ; x2 a xmm10 como double
+	mulsd xmm9, xmm10 ; res * x2
+	cvtsi2sd xmm10, rcx ; x3 a xmm10 como double
+	mulsd xmm9, xmm10 ; res * x3
+	cvtsi2sd xmm10, r8 ; x4 a xmm10 como double
+	mulsd xmm9, xmm10 ; res * x4
+	cvtsi2sd xmm10, r9 ; x5 a xmm10 como double
+	mulsd xmm9, xmm10 ; res * x5
+	cvtsi2sd xmm10, [rbp + 0x10] ; x6 a xmm10 como double
+	mulsd xmm9, xmm10 ; res * x6
+	cvtsi2sd xmm10, [rbp + 0x18] ; x7 a xmm10 como double
+	mulsd xmm9, xmm10 ; res * x7
+	cvtsi2sd xmm10, [rbp + 0x20] ; x8 a xmm10 como double
+	mulsd xmm9, xmm10 ; res * x8
+	cvtsi2sd xmm10, [rbp + 0x28] ; x9 a xmm10 como double
+	mulsd xmm9, xmm10 ; res * x9
 
-	; convertimos los enteros en doubles y los multiplicamos por xmm0.
-	cvtsi2sd xmm1, rsi
-	cvtsi2sd xmm2, rdx
-	cvtsi2sd xmm3, rcx
-	cvtsi2sd xmm4, r8
-	cvtsi2sd xmm5, r9
-	cvtsi2sd xmm6, [rbp+0x10]
-	cvtsi2sd xmm7, [rbp+0x18]
-	cvtsi2sd xmm8, [rbp+0x20]
-	cvtsi2sd xmm9, [rbp+0x28]
-	
-	mulsd xmm0, xmm1
-	mulsd xmm0, xmm2
-	mulsd xmm0, xmm3
-	mulsd xmm0, xmm4
-	mulsd xmm0, xmm5
-	mulsd xmm0, xmm6
-	mulsd xmm0, xmm7
-	mulsd xmm0, xmm8
-	mulsd xmm0, xmm9
-
-	; guardamos el resultado en el destino
-	movd [rdi], xmm0
+	movsd [rdi], xmm9 ; guardo el resultado en destination
 
 	; epilogo
 	mov rsp, rbp

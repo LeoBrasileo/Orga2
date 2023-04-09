@@ -48,8 +48,8 @@ int main (void){
 	printf("\n");
 
 	double m2 = 1;
-	product_9_f(&m2, 12, 2.4, 2, 3.2, 3, 5.2, 1, 6.2, 2, 7.2, 3, 8.2, 1, 9.2, 2, 1.1, 1, 5.5);
-	//prueba deberia dar 703006833.3
+	product_9_f(&m2, 12, 2.4, 2, 3.2, 3, 5.2, 1, 6.2, 2, 7.2, 3, 8.2, 1, 9.2, 2, 1.1, 1, 1.1);
+	//prueba deberia dar 140601361.6
 	printf("multiplciacion doble : %f",m2);
 	printf("\n");
 
