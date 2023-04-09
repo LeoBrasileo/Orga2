@@ -39,10 +39,10 @@ int main (void){
 	printf("\n");
 
 	packed_complex_item arrP[4];
-	arr[0].z = 5;
-	arr[1].z = 5;
-	arr[2].z = 6;
-	arr[3].z = 7;
+	arrP[0].z = 5;
+	arrP[1].z = 6;
+	arrP[2].z = 7;
+	arrP[3].z = 8;
 	int zp = packed_complex_sum_z(&arrP[0], 4);
 	printf("packed complex sum z : %d",zp);
 	printf("\n");

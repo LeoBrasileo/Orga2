@@ -47,7 +47,6 @@ pack_loop_start:
     add rax, rdx     ; Sumar el atributo z al acumulador
     add rdi , size_complex_item_packed; avanzar al siguiente elemento
 
-	; loop decrementa rcx y salta a loop_start si rcx != 0
 	loop pack_loop_start
 
     ret
