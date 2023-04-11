@@ -105,11 +105,12 @@ product_2_f:
 	mov rbp,rsp
 	sub rsp, 4 ;reservo espacio para 1 entero en la pila
 
-	cvtsi2ss xmm1, rsi ; convierto x1 a float y lo guardo en xmm1
-	mulss xmm0, xmm1 ; f1 * x1
-	cvtss2si rsi, xmm0 ; convierto el resultado a entero y lo guardo en rsi
+	cvtsi2sd xmm1, rsi ; convierto x1 a float y lo guardo en xmm1
+	cvtss2sd xmm0, xmm0
+	mulsd xmm0, xmm1 ; f1 * x1
+	cvttsd2si rsi, xmm0 ; convierto el resultado a entero y lo guardo en rsi
 	push rsi
-	mov [rdi], rsi ; guardo el resultado en destination
+	mov [rdi], esi ; guardo el resultado en destination
 	pop rsi
 
 	;epilogo

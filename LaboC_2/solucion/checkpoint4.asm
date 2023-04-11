@@ -21,7 +21,7 @@ global strLen
 ; int32_t strCmp(char* a, char* b)
 strCmp:
 	mov r8, rdi
-	mov WORD r9, rsi
+	mov r9, rsi
 
 	mov r10, 0 ; contador
 	
@@ -30,7 +30,7 @@ strCmp:
 	mov rcx, rax
 
 	; guardo en r11 tamaño de b
-	mov WORD rdi, r9
+	mov rdi, r9
 	call strLen
 	mov r11, rax
 
@@ -39,17 +39,14 @@ strCmp:
 	loopCmp:
 	cmp r10, rcx
 	je finCmp
-	mov byte rdi, [r8 + r10]
-	mov byte rsi, [r9 + r10]
+	mov dil, [r8 + r10]
+	mov sil, [r9 + r10]
 	inc r10
-	call esMenorChar
+	CMP dil, sil
 	;si es menor
-	cmp rax, 1
-	je aMenor
+	jl aMenor
 	;si es mayor
-	call esMayorChar
-	cmp rax, 1
-	je aMayor
+	jg aMayor
 	;si son iguales
 	jmp loopCmp
 
@@ -72,52 +69,56 @@ strCmp:
 
 ; char* strClone(char* a)
 strClone:
-	mov r9, rdi
+	push rbp
+	mov rbp, rsp
+	push rbx
+	sub rsp, 8
+
+	mov rbx, rdi
 	;reservo memoria
 	call strLen
 	mov rdi, rax
-	syscall
+	add rdi, 1
+	call malloc wrt ..plt
 
-	mov rdi, r9
+	mov rdi, rbx
 	mov r10, 0 ;contador
 
 	loop_clone:
-	mov byte r11, [rdi + r10]
-	cmp byte r11, 0
+	mov r11b, [rdi + r10]
+	cmp r11b, 0
 	je fin_clone
-	mov [rax + r10], r11
+	mov [rax + r10], r11b
 	inc r10
 	jmp loop_clone
 	
 	fin_clone:
+	mov byte [rax + r10], 0
+	add rsp, 8
+	pop rbx
+	pop rbp
 	ret
 
 ; void strDelete(char* a)
 strDelete:
-	; Esto no funciona porque copia el puntero al string
-	; pero no el string en sí mismo
-	mov r9, rdi
-	mov rax, 0 ;contador
-	mov r8, r9
-	loop_del:
-	add r8, rax
-	mov rdi, r8
+	push rbp
+	mov rbp, rsp
 	call freeC
-	cmp byte [rdi], 0
-	je fin_del
-	inc rax
-	mov r8, r9
-	jmp loop_del
 	
-	fin_del:
+	pop rbp
 	ret
 
 ; void strPrint(char* a, FILE* pFile)
 strPrint:
+	push rbp
+	mov rbp, rsp
+
 	mov r9, rdi
 	mov rdi, rsi
 	mov rsi, r9
 	call fprintfC
+
+	pop rbp
 	ret
 
 ; uint32_t strLen(char* a)
