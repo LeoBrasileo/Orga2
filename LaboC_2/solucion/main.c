@@ -64,6 +64,7 @@ int main (void){
 	char* stClon = strClone("hola que tal");
 	printf("string Clone: %s",stClon);
 	printf("\n");
+	//strDelete(stClon);
 
 	return 0;    
 }

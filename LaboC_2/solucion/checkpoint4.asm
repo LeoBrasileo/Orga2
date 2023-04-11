@@ -3,6 +3,8 @@ extern free
 extern fprintf
 extern esMenorChar
 extern esMayorChar
+extern freeC
+extern fprintfC
 
 section .data
 
@@ -96,12 +98,15 @@ strDelete:
 	; pero no el string en sí mismo
 	mov r9, rdi
 	mov rax, 0 ;contador
+	mov r8, r9
 	loop_del:
-	mov rdi, [r9 + rax]
-	call free
-	cmp byte [r9 + rax], 0
+	add r8, rax
+	mov rdi, r8
+	call freeC
+	cmp byte [rdi], 0
 	je fin_del
 	inc rax
+	mov r8, r9
 	jmp loop_del
 	
 	fin_del:
@@ -112,7 +117,7 @@ strPrint:
 	mov r9, rdi
 	mov rdi, rsi
 	mov rsi, r9
-	;call fprintf
+	call fprintfC
 	ret
 
 ; uint32_t strLen(char* a)
