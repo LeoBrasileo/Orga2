@@ -53,6 +53,18 @@ int main (void){
 	printf("multiplciacion doble : %f",m2);
 	printf("\n");
 
+	int sl = strLen("hola que tal");
+	printf("string Length: %d",sl);
+	printf("\n");
+
+	int sc = strCmp("a", "abc");
+	printf("string compare: %d",sc);
+	printf("\n");
+
+	char* stClon = strClone("hola que tal");
+	printf("string Clone: %s",stClon);
+	printf("\n");
+
 	return 0;    
 }
 

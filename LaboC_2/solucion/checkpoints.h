@@ -114,5 +114,7 @@ uint32_t strLen(char* a);
 
 uint32_t sumar_c(uint32_t a, uint32_t b); 
 uint32_t restar_c(uint32_t a, uint32_t b); 
+bool esMenorChar(char a, char b);
+bool esMayorChar(char a, char b);
 
 #endif
