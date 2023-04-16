@@ -12,7 +12,7 @@ int main (void){
 	for (int k = 0; k < 16; k++)
             bytes_c[k] = k;
 
-	invertirBytes_asm(bytes_c, 2, 10);
+	invertirBytes_asm(bytes_c, 1, 10);
 
 	for(uint32_t j = 0; j < 16; j++){
         printf("bytes_c[%2u] = %3u\t", j, bytes_c[j]);
