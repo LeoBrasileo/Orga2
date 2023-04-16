@@ -18,6 +18,9 @@ int main (void){
         printf("bytes_c[%2u] = %3u\t", j, bytes_c[j]);
 		printf("\n");
     }
+	
+	free(bytes_c);
+
 	return 0;    
 }
 
