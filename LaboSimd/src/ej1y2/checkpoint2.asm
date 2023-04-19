@@ -1,9 +1,10 @@
 section .rodata
 	ocho: times 4 dd 8
 	unos: times 16 db 1
-	_offset: 64
 
 section .text
+
+	%define offset 64
 
 global checksum_asm
 
@@ -19,7 +20,7 @@ checksum_asm:
 	movdqu xmm8, [unos]
 
 
-	.loop:
+	.ciclo:
 	pmovzxwd xmm0, [rbx] ; muevo la primera mitad de Aij a xmm0
 	pmovzxwd xmm1, [rbx + 16]	; muevo la primera mitad de Bij a xmm1
 	pmovzxwd xmm2, [rbx + 8] ; muevo la segunda mitad de Aij a xmm0
@@ -32,12 +33,15 @@ checksum_asm:
 	pmuldq xmm1, xmm5 ; segunda mitad x 8
 	pcmpeqd xmm6, xmm0 ; compara las operaciones de la primera mitad con la primera mitad de Cij
 	pcmpeqd xmm7, xmm1 ; compara las operaciones de la segunda mitad con la segunda mitad de Cij
-	pand xmm6, xmm7
-	pand xmm8, xmm6
-	add rbx, _offset ; desplazamiento a la proxima terna
+	pand xmm6, xmm7 ; chequea si ambas mitades son iguales
+	pcmpeqd xmm8, xmm6 ; chequea si el resultado es 1
+	; hay que ver como salir del ciclo cuando no es 1
+	add rbx, offset ; desplazamiento a la proxima terna
+	loop .ciclo
+	jmp fin
 
-
+	.fin
 	mov rsp, rbp
-	pop rpb
+	pop rbp
 	ret
 
