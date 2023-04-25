@@ -1,4 +1,4 @@
-section .rodata
+ section .rodata
 	ocho: times 4 dd 8
 	unos: times 16 db 1
 
@@ -12,14 +12,14 @@ global checksum_asm
 
 checksum_asm:
 	push rbp
-	mov rsp, rbp
+	mov rbp, rsp
 
 	mov ecx, esi ; ecx = n
 	mov rbx, rdi ; pasamos la direccion de array a rbx
 	movdqu xmm5, [ocho]
 	movdqu xmm8, [unos]
 
-
+	mov rax, 1
 	.ciclo:
 	
 	; partimos los Aij, Bij, Cij en dos partes
@@ -40,17 +40,21 @@ checksum_asm:
 	; comparaciones
 	pcmpeqd xmm6, xmm0 ; compara las operaciones de la primera mitad con la primera mitad de Cij
 	pcmpeqd xmm7, xmm1 ; compara las operaciones de la segunda mitad con la segunda mitad de Cij
-	pand xmm6, xmm7 ; chequea si ambas mitades son iguales
-	ptest xmm8, xmm6 ; chequea si el resultado es 1
+
+	phaddd xmm7, xmm7
+	phaddd xmm6, xmm6
+
 
 	; saltos
-	jnz .fin ; si no es 1, salta a fin
+	jz .noVale ; si no es 1, salta a fin
 	add rbx, offset ; desplazamiento a la proxima terna, rbx = rbx + 64
 	loop .ciclo
+
 	jmp .fin
 
+	.noVale:
+	xor rax, rax
+	
 	.fin:
-	mov rsp, rbp
 	pop rbp
 	ret
-
