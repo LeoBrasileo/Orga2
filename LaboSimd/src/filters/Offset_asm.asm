@@ -18,7 +18,10 @@ Offset_asm:
 	push rbp
 	mov rbp, rsp
 
-	mov xmmo, [rdi]
+	movdqu xmm0, [rdi]
+
+	.ciclo: 
+	mov
 
 	mov rsp, rbp
 	pop rbp
