@@ -23,15 +23,19 @@ Offset_asm:
 	mov rbp, rsp
 	push rbx
 	push r12
-	push r11
-	push r10
+	push r13
+	push r14
+	push r15
+	sub rsp, 8
 
 	lea rbx, [rdi] ; rbx = src
 	lea r12, [rsi] ; r12 = dst
-	xor r11, r11 ; r11 = 0, guardamos en r11 el desplazamiento en src
-	xor r10, r10 ; r10 = 0, guardamos en r10 el desplazamiento en dst
+	xor r13, r13 ; r13 = 0, guardamos en r13 el desplazamiento en src
+	xor r14, r14 ; r14 = 0, guardamos en r14 el desplazamiento en dst
+	mov r15, rcx ; r15 = height, guardamos en r15 la altura de la imagen
 
-	mov ecx, edx ; rcx = width
+	xor rcx, rcx
+	mov ecx, r8d ; rcx = src_row_size
 
 	movdqu xmm15, [solo_alpha] ; pasamos la mascara a xmm15
 
@@ -41,28 +45,28 @@ Offset_asm:
 	movdqu [r12], xmm0 ; guardamos los 4 pixeles en dst
 	add rbx, offset_pixels ; avanzamos 4 pixeles en src
 	add r12, offset_pixels ; avanzamos 4 pixeles en dst
-	add r11d, offset_pixels ; sumamos 4 pixeles al desplazamiento total en src
-	add r10d, offset_pixels ; sumamos 4 pixeles al desplazamiento total en dst
-	cmp r11d, ecx ; si nos desplazamos el ancho de la imagen saltamos a .sigFila
+	add r13d, offset_pixels ; sumamos 4 pixeles al desplazamiento total en src
+	add r14d, offset_pixels ; sumamos 4 pixeles al desplazamiento total en dst
+	cmp r13, rcx ; si nos desplazamos el ancho de la imagen saltamos a .sigFila
 	je .sigFila
-	jmp .ciclo
+	loop .ciclo
 	
 	.sigFila:
 	lea rbx, [rdi] 
 	lea r12, [rsi]
-	add ebx, r8d ; avanzamos src_row_size (sig fila en src)
-	add r12d, r9d ; avanzamos dst_row_size (sig fila en dst)
-	movdqu xmm0, [rbx]
-	pand xmm0, xmm15
-	movdqu [r12], xmm0
-	; cmp r10d, r8d
-	; je .fin
-	; mov ecx, r8d
-	; jmp .ciclo
+	add rbx, r8 ; avanzamos src_row_size (sig fila en src)
+	add r12, r9 ; avanzamos dst_row_size (sig fila en dst)
+	xor r13, r13 ; reiniciamos el desplazamiento en src
+	xor r14, r14 ; reiniciamos el desplazamiento en dst
+	dec r15
+	jz .fin
+	jmp .ciclo
 	
 	.fin:
-	pop r10
-	pop r11
+	add rsp, 8
+	pop r15
+	pop r14
+	pop r13
 	pop r12
 	pop rbx
 	mov rsp, rbp
