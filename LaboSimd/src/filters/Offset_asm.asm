@@ -13,7 +13,7 @@ section .text
 
 global Offset_asm
 
-; src = rdi, dst = rsi
+; *src uint_8[rdi], *dst uint_8[rsi], width uint_32[edx], height uint_32[ecx], src_row_size uint_32[r8d], dst_row_size uint_32[r9d]
 Offset_asm:
 	push rbp
 	mov rbp, rsp

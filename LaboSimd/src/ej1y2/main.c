@@ -48,7 +48,7 @@ int main (void){
 
 	int res = checksum_asm(test_data, array_size);
 
-	printf("checksum %d ", res);
+	printf("checksum: %d ", res);
 	printf("\n");
 	
 	free(bytes_c);
