@@ -19,8 +19,6 @@ checksum_asm:
 
 	push rbx
 	push r12
-	push r13
-	sub rsp, 8 ;alinear
 
 	mov ecx, esi ; ecx = n
 	mov rbx, rdi ; pasamos la direccion de array a rbx
@@ -69,8 +67,6 @@ checksum_asm:
 
 	
 	.fin:
-	add rsp, 8
-	pop r13
 	pop r12
 	pop rbx
 	pop rbp
