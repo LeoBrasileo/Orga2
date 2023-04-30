@@ -16,8 +16,8 @@ section .text
 
 global Offset_asm
 
-; *src uint_8[rdi], *dst uint_8[rsi], width uint_32[edx], height uint_32[ecx],
-; src_row_size uint_32[r8d], dst_row_size uint_32[r9d]
+; *src uint_8[rdi], *dst uint_8[rsi], width uint_32[rdx], height uint_32[rcx],
+; src_row_size uint_32[r8], dst_row_size uint_32[r9]
 Offset_asm:
 	push rbp
 	mov rbp, rsp
@@ -35,31 +35,31 @@ Offset_asm:
 	mov r15, rcx ; r15 = height, guardamos en r15 la altura de la imagen
 
 	xor rcx, rcx
-	mov ecx, r8d ; rcx = src_row_size
+	mov rcx, r8 ; rcx = src_row_size
 
 	movdqu xmm15, [solo_alpha] ; pasamos la mascara a xmm15
 
 	.ciclo:
+	cmp r15, 0 ; si r15 = 0 terminamos
+	je .fin
+
 	movdqu xmm0, [rbx] ; traemos 4 pixeles
 	pand xmm0, xmm15 ; AND con la mascara
 	movdqu [r12], xmm0 ; guardamos los 4 pixeles en dst
-	add rbx, offset_pixels ; avanzamos 4 pixeles en src
-	add r12, offset_pixels ; avanzamos 4 pixeles en dst
-	add r13d, offset_pixels ; sumamos 4 pixeles al desplazamiento total en src
-	add r14d, offset_pixels ; sumamos 4 pixeles al desplazamiento total en dst
-	cmp r13, rcx ; si nos desplazamos el ancho de la imagen saltamos a .sigFila
-	je .sigFila
-	loop .ciclo
+	
+	add rbx, offset_pixels ; avanzamos 4 pixeles de lectura en src
+	add r12, offset_pixels ; avanzamos 4 pixeles de escritura en dst
+
+	add r13, offset_pixels ; sumamos 4 pixeles al desplazamiento total en src
+	add r14, offset_pixels ; sumamos 4 pixeles al desplazamiento total en dst
+
+	cmp r13, rcx ; si nos desplazamos el ancho de la imagen hacemos .sogFila sino seguimos con .ciclo
+	jl .ciclo
 	
 	.sigFila:
-	lea rbx, [rdi] 
-	lea r12, [rsi]
-	add rbx, r8 ; avanzamos src_row_size (sig fila en src)
-	add r12, r9 ; avanzamos dst_row_size (sig fila en dst)
 	xor r13, r13 ; reiniciamos el desplazamiento en src
 	xor r14, r14 ; reiniciamos el desplazamiento en dst
-	dec r15
-	jz .fin
+	dec r15	
 	jmp .ciclo
 	
 	.fin:
