@@ -1,8 +1,11 @@
 section .rodata
-mascara_1:
-  db 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
-
-; la mascara se define de a 4 bytes, en orden blue, red, green, alpha
+; las mascaras se definen de a 4 bytes, en orden blue, red, green, alpha
+azules:
+  db 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00
+verdes:
+  db 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00
+rojos:
+  db 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00
 solo_alpha:
 	db 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF
 
@@ -78,11 +81,11 @@ Offset_asm:
 
 	xor rcx, rcx
 	mov rcx, r8 ; rcx = src_row_size
-	sub rcx, offset_pixels*4 ; rcx = src_row_size - 8 pixels
+	sub rcx, offset_pixels*4 ; rcx = src_row_size - 16 pixels de borde
 
 	add r12, r9 ; r12 = dst + dst_row_size * 8
 	add rbx, r9 ; rbx = src + dst_row_size * 8
-	add r12, offset_pixels*2 ; avanzo 8 pixeles
+	add r12, offset_pixels*2 ; avanzo 8 pixeles de inicializacion
 	add rbx, offset_pixels*2
 	sub r15, 16 ; r15 = height - 16 pixeles, 8 arriba, 8 abajo
 
@@ -90,8 +93,21 @@ Offset_asm:
 	cmp r15, 0 ; si r15 = 0 terminamos
 	je .fin
 
-	movdqu xmm0, [rbx] ; traemos 4 pixeles
-	movdqu [r12], xmm0 ; guardamos los 4 pixeles en dst
+	movdqu xmm1, [rbx] ; traemos 4 pixeles
+	movdqu xmm2, [rbx + r9] ; traemos 4 pixeles de 8 filas adelante
+
+	movdqu xmm0, [azules] ; la mascara va a agarrar los azules de xmm2 y los va a insertar en xmm1
+	pblendvb xmm1, xmm2 ; mezclamos los pixeles de las 2 filas
+
+	movdqu xmm3, [rbx + offset_pixels*2] ; traemos 4 pixeles de 8 columnas adelante
+	movdqu xmm0, [rojos]
+	pblendvb xmm1, xmm3
+
+	movdqu xmm4, [rbx + r9 + offset_pixels*2] ; traemos 4 pixeles de 8 filas y columnas adelante
+	movdqu xmm0, [verdes]
+	pblendvb xmm1, xmm4
+
+	movdqu [r12], xmm1 ; guardamos los 4 pixeles en dst
 	
 	add rbx, offset_pixels ; avanzamos 4 pixeles de lectura en src
 	add r12, offset_pixels ; avanzamos 4 pixeles de escritura en dst
@@ -106,8 +122,8 @@ Offset_asm:
 	xor r14, r14 ; reiniciamos el desplazamiento en dst
 	dec r15
 	;acomodo borde
-	add rbx, offset_pixels*4 ; avanzamos 8 pixeles de lectura en src
-	add r12, offset_pixels*4 ; avanzamos 8 pixeles de escritura en dst
+	add rbx, offset_pixels*4 ; avanzamos 16 pixeles de lectura en src, 8 para terminar la fila y 8 para empezar la siguiente
+	add r12, offset_pixels*4 ; avanzamos 16 pixeles de escritura en dst
 	jmp .cicloFiltro
 
 	
