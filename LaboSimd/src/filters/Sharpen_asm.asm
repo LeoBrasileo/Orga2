@@ -13,6 +13,12 @@ global Sharpen_asm
 Sharpen_asm:
 	push rbp
 	mov rbp, rsp
+	push rbx
+	push r12
+	push r13
+	push r14
+	push r15
+	sub rsp, 8
 
 	; cargada de registros iniciales
 	lea rbx, [rdi] ; rbx = src
@@ -36,6 +42,12 @@ Sharpen_asm:
 
 	.matrizLlena:
 	mov DWORD [rax + 4*float_size], 9
+
+
+	; rax = direccion de memoria de sharpen
+	; sharpen = | -1 | -1 | -1 |
+	;		    | -1 |  9 | -1 |
+	;		    | -1 | -1 | -1 |
 
 
 	xor rcx, rcx
@@ -66,5 +78,11 @@ Sharpen_asm:
 	jmp .filtro
 
 	.fin:
+	add rsp, 8
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop rbx
 	pop rbp
 	ret
