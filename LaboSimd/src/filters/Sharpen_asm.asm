@@ -14,12 +14,17 @@ Sharpen_asm:
 	push rbp
 	mov rbp, rsp
 
-	push rdi
-	sub rsp, 8
-	mov rdi, 36		;definimos 4*9 = 36 bytes. 9 flotantes ya que es el tamano de la matriz
+	; cargada de registros iniciales
+	lea rbx, [rdi] ; rbx = src
+	lea r12, [rsi] ; r12 = dst
+	xor r13, r13 ; r13 = 0, guardamos en r13 el desplazamiento en src
+	xor r14, r14 ; r14 = 0, guardamos en r14 el desplazamiento en dst
+	mov r15, rcx ; r15 = height, guardamos en r15 la altura de la imagen
+
+
+	; crear matriz[float] sharpen
+	mov rdi, float_size*9 ;vamos a pedir 9 flotantes ya que es el tamano de la matriz
 	call malloc
-	add rsp, 8
-	pop rdi
 
 	xor rcx, rcx
 	.llenarMatriz:
@@ -28,19 +33,10 @@ Sharpen_asm:
 	mov DWORD [rax + rcx*float_size], -1
 	inc rcx
 	jmp .llenarMatriz
-	
 
 	.matrizLlena:
 	mov DWORD [rax + 4*float_size], 9
-	
 
-
-	; cargada de registros iniciales
-	lea rbx, [rdi] ; rbx = src
-	lea r12, [rsi] ; r12 = dst
-	xor r13, r13 ; r13 = 0, guardamos en r13 el desplazamiento en src
-	xor r14, r14 ; r14 = 0, guardamos en r14 el desplazamiento en dst
-	mov r15, rcx ; r15 = height, guardamos en r15 la altura de la imagen
 
 	xor rcx, rcx
 	mov rcx, r8 ; rcx = src_row_size
