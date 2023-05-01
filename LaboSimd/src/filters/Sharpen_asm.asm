@@ -1,5 +1,9 @@
+extern malloc
+
 section .text
 	%define offset_pixels 16
+	%define float_size 4
+	
 
 global Sharpen_asm
 
@@ -9,6 +13,27 @@ global Sharpen_asm
 Sharpen_asm:
 	push rbp
 	mov rbp, rsp
+
+	push rdi
+	sub rsp, 8
+	mov rdi, 36		;definimos 4*9 = 36 bytes. 9 flotantes ya que es el tamano de la matriz
+	call malloc
+	add rsp, 8
+	pop rdi
+
+	xor rcx, rcx
+	.llenarMatriz:
+	cmp rcx, 9
+	je .matrizLlena
+	mov DWORD [rax + rcx*float_size], -1
+	inc rcx
+	jmp .llenarMatriz
+	
+
+	.matrizLlena:
+	mov DWORD [rax + 4*float_size], 9
+	
+
 
 	; cargada de registros iniciales
 	lea rbx, [rdi] ; rbx = src
