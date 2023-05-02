@@ -76,27 +76,27 @@ Sharpen_asm:
 	movss xmm4, [rax + rcx*float_size] ; traemos valor de la matriz
 
 	;AZUL
-	movzx r14d, BYTE [rbx]
+	movzx r14d, BYTE [rbx+3]
 	cvtsi2ss xmm5, r14d ; pasamos a float
 	mulss xmm5, xmm4 ; multiplicamos
 	addss xmm1, xmm5
 
 	;VERDE
-	movzx r14d, BYTE [rbx+1]
+	movzx r14d, BYTE [rbx+2]
 	cvtsi2ss xmm5, r14d ; pasamos a float
 	mulss xmm5, xmm4 ; multiplicamos
 	addss xmm2, xmm5
 
 	;ROJO
-	movzx r14d, BYTE [rbx+2]
+	movzx r14d, BYTE [rbx+1]
 	cvtsi2ss xmm5, r14d ; pasamos a float
 	mulss xmm5, xmm4 ; multiplicamos
 	addss xmm3, xmm5
 	loop .recorrerMatriz
 
-	pslldq xmm1, 24
-	pslldq xmm2, 16
-	pslldq xmm3, 8
+	pslldq xmm1, 0
+	pslldq xmm2, 8
+	pslldq xmm3, 16
 	por xmm0, xmm1
 	por xmm0, xmm2
 	por xmm0, xmm3
@@ -104,7 +104,7 @@ Sharpen_asm:
 	packssdw xmm0, xmm0 ; pasamos a 16 bits
 	packsswb xmm0, xmm0 ; pasamos a 8 bits
 	pextrd r14d, xmm0, 0 ; guardamos en r14d el valor de la parte baja de xmm0
-	mov r14b, BYTE [rbx + 3] ; guardamos el valor de alpha en r14b
+	mov r14b, BYTE [rbx] ; guardamos el valor de alpha en r14b
 
 	mov DWORD [r12 + r8 + 8 + 1], r14d ; guardo resultado en dst[i+1][j+1]
 
