@@ -5,6 +5,8 @@ section .rodata
 mascara_azul:
   db 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
 
+matriz: dw -1.0, -1.0, -1.0, -1.0, 9.0, -1.0, -1.0, -1.0, -1.0
+
 section .text
 	%define offset_pixels 4
 	%define float_size 4
@@ -104,7 +106,7 @@ Sharpen_asm:
 	packssdw xmm0, xmm0 ; pasamos a 16 bits
 	packsswb xmm0, xmm0 ; pasamos a 8 bits
 	pextrd r14d, xmm0, 0 ; guardamos en r14d el valor de la parte baja de xmm0
-	mov r14b, BYTE [rbx] ; guardamos el valor de alpha en r14b
+	mov r14b, BYTE [rbx + 3] ; guardamos el valor de alpha en r14b
 
 	mov DWORD [r12 + r8 + 8 + 1], r14d ; guardo resultado en dst[i+1][j+1]
 
