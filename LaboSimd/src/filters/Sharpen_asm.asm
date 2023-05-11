@@ -2,13 +2,17 @@ extern malloc
 extern free
 
 section .rodata
+pixel_1: db 0x0F, 0x0F, 0x0F, 0x0F 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x03, 0x02, 0x01, 0x00
+pixel_2: db 0x0F, 0x0F, 0x0F, 0x0F 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x07, 0x06, 0x05, 0x04
+pixel_3: db 0x0F, 0x0F, 0x0F, 0x0F 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x08, 0x07, 0x06, 0x05
+pixel_4: db 0x0F, 0x0F, 0x0F, 0x0F 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0F, 0x0C, 0x0B, 0x0A, 0x09
 
 sharpen: dd -1.0, -1.0, -1.0, -1.0, 9.0, -1.0, -1.0, -1.0, -1.0
 
-todo_negro: db 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255
+solo_alpha: db 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255, 0, 0, 0, 255
 
 section .text
-	%define offset_pixels 4
+	%define offset_pixels 16
 	%define float_size 4
 	%define pixel_size 4
 	
@@ -28,27 +32,23 @@ Sharpen_asm:
 	push r15
 
 	; cargada de registros iniciales
-	lea rbx, [rdi] ; rbx = src
-	lea r12, [rsi] ; r12 = dst
 	xor r13, r13 ; r13 = 0, guardamos en r13 el desplazamiento en src
 	xor r14, r14 ; r14 = 0, guardamos en r14 los valores de los pixeles en cada ciclo
 	mov r15, rcx ; r15 = height, guardamos en r15 la altura de la imagen como contador
-	;dec r15, 4
+	movdqu xmm10, [solo_alpha]
+
+	xor rcx, rcx
+	mov rcx, r9
+	sub rcx, 16 ; rcx = src_row_size - 16 pixels de borde
 
 	.filtro:
 	cmp r15, 0
 	je .fin
 
-	cmp r13, r8
-	je .sigLinea
-	cmp r13, 0
-	je .pintarnegro
-	cmp r15, rcx
-	je .pintarnegro
-	cmp r15, 1
-	je .pintarnegro
-
-	pxor xmm6, xmm6 ; limpio xmm6 para usarlo como registro de tratamiento general
+	pxor xmm6, xmm6 ; pixel 1
+	pxor xmm7, xmm7 ; pixel 2
+	pxor xmm8, xmm8 ; pixel 3
+	pxor xmm9, xmm9 ; pixel 4
 
 	xor r9, r9 ; r9 = ii
 	.loopfilaSharpen:
@@ -62,33 +62,37 @@ Sharpen_asm:
 	shufps xmm1, xmm1, 0x00 ; xmm1 = [a, a, a, a]
 
 	;calculo en r11 el offset
-	mov r11, r9
-	imul r11, r8
-	mov r14, r10
-	imul r14, 4
-	add r11, r14
+	mov r11, r8
+	imul r11, r9
+	mov r12, r10
+	imul r12, 4
+	add r11, r12
 
-	;cargo pixel en orden azul, verde, rojo como floats en xmm0
-	movzx r14d, BYTE [rbx + r11] ; r14b = azul
-	cvtsi2ss xmm2, r14d ; xmm2 = azul float
-	movzx r14d, BYTE [rbx + r11 + 1] ; r14b = verde
-	cvtsi2ss xmm3, r14d ; xmm2 = verde float
-	movzx r14d, BYTE [rbx + r11 + 2] ; r14b = rojo
-	cvtsi2ss xmm4, r14d ; xmm2 = rojo float
+	movdqu xmm0, [rdi + r11] ; cargo 4 pixeles
 
-	mulps xmm2, xmm1 ; xmm2 = azul * a
-	mulps xmm3, xmm1 ; xmm3 = verde * a
-	mulps xmm4, xmm1 ; xmm4 = rojo * a
+	pmovzxbd xmm2, xmm0 ; extiendo el primer pixel de byte a double word (empaquetados)
+	psrldq xmm0, 4 ; shift xmm0 4 bytes a la derecha
+	pmovzxbd xmm3, xmm0 ; extiendo el segundo pixel de byte a double word (empaquetados)
+	psrldq xmm0, 4 ; shift xmm0 4 bytes a la derecha
+	pmovzxbd xmm4, xmm0 ; extiendo el tercer pixel de byte a double word (empaquetados)
+	psrldq xmm0, 4 ; shift xmm0 4 bytes a la derecha
+	pmovzxbd xmm5, xmm0 ; extiendo el cuarto pixel de byte a double word (empaquetados)
 
-	; opero con los tres colores (floats) en xmm0
-	pslldq xmm2, 12
-	pslldq xmm3, 8
-	pslldq xmm4, 4
-	por xmm0, xmm2
-	por xmm0, xmm3
-	por xmm0, xmm4
+	cvtdq2ps xmm2, xmm2 ; convierto el primer pixel de int a float
+	cvtdq2ps xmm3, xmm3 ; convierto el segundo pixel de int a float
+	cvtdq2ps xmm4, xmm4 ; convierto el tercer pixel de int a float
+	cvtdq2ps xmm5, xmm5 ; convierto el cuarto pixel de int a float
 
-	addps xmm6, xmm0 ; sumo el resultado al acumulador
+	mulps xmm2, xmm1
+	mulps xmm3, xmm1
+	mulps xmm4, xmm1
+	mulps xmm5, xmm1
+
+	; acmulo resultados
+	addps xmm6, xmm2
+	addps xmm7, xmm3
+	addps xmm8, xmm4
+	addps xmm9, xmm5
 
 	inc r10
 	cmp r10, 3
@@ -98,28 +102,27 @@ Sharpen_asm:
 
 	.finSharpen:
 	cvtps2dq xmm6, xmm6 ; float a int
-	packssdw xmm6, xmm6 ; pasamos a 16 bits
-	packsswb xmm6, xmm6 ; pasamos a 8 bits
-	pextrd r14d, xmm6, 0 ; guardamos en r14d el valor de la parte baja de xmm0
-	mov r14b, BYTE [rbx+3] ; guardamos el valor de alpha en r14b
+	cvtps2dq xmm7, xmm7
+	cvtps2dq xmm8, xmm8
+	cvtps2dq xmm9, xmm9
 
-	mov DWORD [r12 + r8 + 4], r14d ; guardo resultado en dst[i+1][j+1]
+	; empaquetado
+	packssdw xmm6, xmm7
+	packssdw xmm8, xmm9
+	packuswb xmm6, xmm8
+	por xmm6, xmm10 ; alpha en 255
 
-	jmp .seguirImagen
+	movdqu [rsi + r8 + 4], xmm6 ; guardo resultado en dst[i+1][j+1]
 
-	.pintarnegro:
-	mov DWORD [r12], 0
+	add rdi, offset_pixels ; avanzamos 4 pixel de lectura en src
+	add rsi, offset_pixels ; avanzamos 4 pixel de escritura en dst
 
-	.seguirImagen:	
-	add rbx, offset_pixels ; avanzamos 1 pixel de lectura en src
-	add r12, offset_pixels ; avanzamos 1 pixel de escritura en dst
+	add r13, offset_pixels ; sumamos 4 pixel al desplazamiento total en src
 
-	add r13, offset_pixels ; sumamos 1 pixel al desplazamiento total en src
-
-	jmp .filtro
+	cmp r13, rcx ; si nos desplazamos el ancho de la imagen hacemos cambio de fila sino seguimos con .ciclo
+	jl .filtro
 
 	.sigLinea:
-	mov DWORD [r12-4], 0
 	xor r13, r13 ; reiniciamos el desplazamiento en src
 	dec r15	
 	jmp .filtro
