@@ -40,6 +40,10 @@ typedef struct str_gdt_entry {
 } __attribute__((__packed__, aligned(8))) gdt_entry_t;
 
 /* Declaracion variables de la Tabla GDT */
+//en GDT_DESC guardamos el tamanio y un puntero al inicio de la tabla de descriptores
+
+//gdt[] tiene los descriptores de la tabla definidos como se pide en el manual
+
 extern gdt_entry_t gdt[];
 extern gdt_descriptor_t GDT_DESC;
 

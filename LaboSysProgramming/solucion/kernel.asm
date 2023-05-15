@@ -36,6 +36,7 @@ start_pm_len equ    $ - start_pm_msg
 BITS 16
 start:
     ; COMPLETAR - Deshabilitar interrupciones
+    cli
 
 
     ; Cambiar modo de video a 80 X 50
@@ -49,8 +50,15 @@ start:
     ; (revisar las funciones definidas en print.mac y los mensajes se encuentran en la
     ; sección de datos)
 
+    mov rdi, start_rm_msg
+    mov rsi, start_rm_len
+
+    call print_text_rm
+
     ; COMPLETAR - Habilitar A20
     ; (revisar las funciones definidas en a20.asm)
+
+    call A20_enable
 
     ; COMPLETAR - Cargar la GDT
 
