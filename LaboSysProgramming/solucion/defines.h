@@ -36,7 +36,7 @@
 #define GDT_OFF_NULL_DESC (GDT_IDX_NULL_DESC << 3)
 #define GDT_OFF_VIDEO  (GDT_IDX_VIDEO << 3)
 
-/* COMPLETAR - Valores para los selectores de segmento de la GDT 
+/* Valores para los selectores de segmento de la GDT 
  * Definirlos a partir de los índices de la GDT, definidos más arriba 
  * Hint: usar operadores "<<" y "|" (shift y or) */
 
@@ -60,7 +60,7 @@
 #define GDT_BASE_MID(base)  (uint8_t)((((uint32_t)(base)) >> 16) & 0xFF)
 #define GDT_BASE_HIGH(base) (uint8_t)((((uint32_t)(base)) >> 24) & 0xFF)
 
-/* COMPLETAR - Valores de atributos */ 
+/* Valores de atributos */ 
 #define DESC_CODE_DATA 0x01
 #define DESC_SYSTEM 0x00
 #define DESC_TYPE_EXECUTE_READ 0x0A
