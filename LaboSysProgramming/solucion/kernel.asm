@@ -9,6 +9,7 @@ global start
 extern A20_enable
 extern GDT_DESC
 extern screen_draw_layout
+extern IDT_DESC
 
 
 %define CS_RING_0_SEL 0x08
@@ -95,6 +96,9 @@ modo_protegido:
     ; Inicializar pantalla
     call screen_draw_layout
    
+
+    lidt [IDT_DESC]
+
     ; Ciclar infinitamente 
     mov eax, 0xFFFF
     mov ebx, 0xFFFF
