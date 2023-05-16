@@ -58,7 +58,7 @@ void print_hex(uint32_t numero, int32_t size, uint32_t x, uint32_t y,
 
 void screen_draw_box(uint32_t fInit, uint32_t cInit, uint32_t fSize,
                      uint32_t cSize, uint8_t character, uint8_t attr) {
-  ca(*p)[VIDEO_COLS] = (ca(*)[VIDEO_COLS])VIDEO;
+  ca(*p)[VIDEO_COLS] = (ca(*)[VIDEO_COLS])VIDEO; // p es un puntero a una matriz de ca
   uint32_t f;
   uint32_t c;
   for (f = fInit; f < fInit + fSize; f++) {
@@ -70,4 +70,15 @@ void screen_draw_box(uint32_t fInit, uint32_t cInit, uint32_t fSize,
 }
 
 void screen_draw_layout(void) {
+  // tobi = gabo
+  ca(*p)[VIDEO_COLS] = (ca(*)[VIDEO_COLS])VIDEO;
+  for (int i = 0; i < VIDEO_COLS; i++)
+  {
+    for (int j = 0; j < VIDEO_FILS; j++)
+    {
+      p[i][j].c = 0;
+      p[i][j].a = 0;
+    }
+  }
+  print("GuccioneOS 1.0", 0, 0, C_FG_WHITE | C_BG_BLACK);
 }

@@ -108,7 +108,23 @@ gdt_entry_t gdt[GDT_COUNT] = {
         .g = 0x1,
         .base_31_24 = GDT_BASE_HIGH(0),
       },
-    
+
+    [GDT_IDX_VIDEO] = 
+      {
+        .limit_15_0 = GDT_LIMIT_LOW(VIDEO_SEGM_SIZE - 1),
+        .base_15_0 = GDT_BASE_LOW(VIDEO),
+        .base_23_16 = GDT_BASE_MID(VIDEO),
+        .type = DESC_TYPE_READ_WRITE,
+        .s = DESC_CODE_DATA,
+        .dpl = 0x00,
+        .p = 0x01,
+        .limit_19_16 = GDT_LIMIT_HIGH(VIDEO_SEGM_SIZE - 1),
+        .avl = 0x0,
+        .l = 0x0,
+        .db = 0x1,
+        .g = 0x0,
+        .base_31_24 = GDT_BASE_HIGH(VIDEO),
+      },
 };
 
 // Aca hay una inicializacion estatica de una structura que tiene su primer componente el tamano 

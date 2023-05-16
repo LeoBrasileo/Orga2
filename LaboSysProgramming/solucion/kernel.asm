@@ -12,6 +12,7 @@ extern GDT_DESC
 
 
 ; COMPLETAR - Agreguen declaraciones extern según vayan necesitando
+extern screen_draw_box
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
 %define CS_RING_0_SEL 0x08
@@ -98,7 +99,7 @@ modo_protegido:
     print_text_pm start_pm_msg, start_pm_len, 0x0004, 0x0000, 0x0000
 
     ; COMPLETAR - Inicializar pantalla
-    
+    call screen_draw_box
    
     ; Ciclar infinitamente 
     mov eax, 0xFFFF
