@@ -80,5 +80,5 @@ void screen_draw_layout(void) {
       p[i][j].a = 0;
     }
   }
-  print("GuccioneOS 1.0", 0, 0, C_FG_WHITE | C_BG_BLACK);
+  print("GuccioneOS 1.0", 0, 0, 0xF);
 }
