@@ -8,13 +8,9 @@ global start
 
 extern A20_enable
 extern GDT_DESC
-;extern print_text_rm
-
-
-; COMPLETAR - Agreguen declaraciones extern según vayan necesitando
 extern screen_draw_layout
 
-; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
+
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
 
@@ -69,15 +65,13 @@ start:
     or eax, 1
     mov cr0, eax
 
-    ; COMPLETAR - Saltar a modo protegido (far jump)
-    ; (recuerden que un far jmp se especifica como jmp CS_selector:address)
-    ; Pueden usar la constante CS_RING_0_SEL definida en este archivo
+    ; Saltar a modo protegido (far jump)
 
     jmp CS_RING_0_SEL:modo_protegido
 
 BITS 32
 modo_protegido:
-    ; COMPLETAR - A partir de aca, todo el codigo se va a ejectutar en modo protegido
+    ; A partir de aca, todo el codigo se va a ejectutar en modo protegido
     ; Establecer selectores de segmentos DS, ES, GS, FS y SS en el segmento de datos de nivel 0
     ; Pueden usar la constante DS_RING_0_SEL definida en este archivo
    
@@ -88,17 +82,17 @@ modo_protegido:
     mov fs, ax
     mov ss, ax
 
-    ; COMPLETAR - Establecer el tope y la base de la pila
+    ; Establecer el tope y la base de la pila
 
     mov esp, 0x25000
     mov ebp, 0x25000
 
 
-    ; COMPLETAR - Imprimir mensaje de bienvenida - MODO PROTEGIDO
+    ; Imprimir mensaje de bienvenida - MODO PROTEGIDO
 
     print_text_pm start_pm_msg, start_pm_len, 0x0004, 0x0000, 0x0000
 
-    ; COMPLETAR - Inicializar pantalla
+    ; Inicializar pantalla
     call screen_draw_layout
    
     ; Ciclar infinitamente 

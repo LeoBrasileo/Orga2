@@ -70,7 +70,6 @@ void screen_draw_box(uint32_t fInit, uint32_t cInit, uint32_t fSize,
 }
 
 void screen_draw_layout(void) {
-  // tobi = gabo
   ca(*p)[VIDEO_COLS] = (ca(*)[VIDEO_COLS])VIDEO;
   for (int i = 0; i < VIDEO_COLS; i++)
   {
