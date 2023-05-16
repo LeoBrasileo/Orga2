@@ -95,7 +95,7 @@ modo_protegido:
 
     ; COMPLETAR - Imprimir mensaje de bienvenida - MODO PROTEGIDO
 
-    print_text_rm start_pm_msg, start_pm_len, 0x01, 0x00, 0x00
+    print_text_pm start_pm_msg, start_pm_len, 0x0004, 0x0000, 0x0000
 
     ; COMPLETAR - Inicializar pantalla
     
