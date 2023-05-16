@@ -4,7 +4,6 @@
 ; ==============================================================================
 
 %include "print.mac"
-
 global start
 
 extern A20_enable
@@ -15,8 +14,8 @@ extern GDT_DESC
 ; COMPLETAR - Agreguen declaraciones extern según vayan necesitando
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
-%define CS_RING_0_SEL 0x00
-;%define DS_RING_0_SEL ??   
+%define CS_RING_0_SEL 0x08
+%define DS_RING_0_SEL 0x18   
 
 
 BITS 16
@@ -80,10 +79,23 @@ modo_protegido:
     ; COMPLETAR - A partir de aca, todo el codigo se va a ejectutar en modo protegido
     ; Establecer selectores de segmentos DS, ES, GS, FS y SS en el segmento de datos de nivel 0
     ; Pueden usar la constante DS_RING_0_SEL definida en este archivo
+   
+    mov ax, DS_RING_0_SEL
+    mov ds, ax
+    mov es, ax
+    mov gs, ax
+    mov fs, ax
+    mov ss, ax
 
     ; COMPLETAR - Establecer el tope y la base de la pila
 
+    mov esp, 0x25000
+    mov ebp, 0x25000
+
+
     ; COMPLETAR - Imprimir mensaje de bienvenida - MODO PROTEGIDO
+
+    print_text_rm start_pm_msg, start_pm_len, 0x01, 0x00, 0x00
 
     ; COMPLETAR - Inicializar pantalla
     
