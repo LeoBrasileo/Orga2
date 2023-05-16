@@ -29,6 +29,7 @@
 *.dylib
 
 # Executables
+*.bin
 *.exe
 *.out
 *.app
@@ -43,6 +44,7 @@
 *.pdb
 
 # Kernel Module Compile Results
+*.img
 *.mod*
 *.cmd
 .tmp_versions/
