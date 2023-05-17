@@ -135,6 +135,7 @@ _isr33:
     in al, 0x60
     push eax
     call process_scancode
+    pop eax
     call pic_finish1
     popad
     iret

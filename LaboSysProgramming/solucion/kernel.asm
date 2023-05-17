@@ -96,6 +96,9 @@ modo_protegido:
 
     print_text_pm start_pm_msg, start_pm_len, 0x0004, 0x0000, 0x0000
 
+    ; Inicializar pantalla
+    call screen_draw_layout
+    
     ; Inicializar la IDT
     call idt_init
 
@@ -114,8 +117,6 @@ modo_protegido:
     ; syscall int 98
     int 0x62
 
-    ; Inicializar pantalla
-    call screen_draw_layout
    
     ; Ciclar infinitamente 
     mov eax, 0xFFFF
