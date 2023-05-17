@@ -12,8 +12,8 @@ extern screen_draw_layout
 extern IDT_DESC
 extern idt_init
 
-;xtern pic_rest
-;extern pic_enable
+extern pic_reset
+extern pic_enable
 
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
@@ -96,13 +96,24 @@ modo_protegido:
 
     print_text_pm start_pm_msg, start_pm_len, 0x0004, 0x0000, 0x0000
 
+    ; Inicializar la IDT
     call idt_init
 
     lidt [IDT_DESC]
 
-    ;call pic_reset
-    ;call pic_enable
-    ;sti
+    ; Inicializar los PIC
+    call pic_reset
+    call pic_enable
+
+    ; Habilitar interrupciones
+    sti
+
+    ; syscall int 88
+    int 0x58
+
+    ; syscall int 98
+    int 0x62
+
     ; Inicializar pantalla
     call screen_draw_layout
    
