@@ -120,7 +120,6 @@ ISRNE 20
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 global _isr32
-; COMPLETAR: Implementar la rutina
 _isr32:
     pushad
     call next_clock
@@ -131,28 +130,31 @@ _isr32:
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
 global _isr33
-; COMPLETAR: Implementar la rutina
 _isr33:
-    ;pushad
-    ;in al, 0x60
-    ;mov dil, al
-    ;call process_scancode
-    ;call pic_finish1
-    ;popad
-    ;iret
+    pushad
+    in al, 0x60
+    push eax
+    call process_scancode
+    call pic_finish1
+    popad
+    iret
 
 
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
 
 global _isr88
-; COMPLETAR: Implementar la rutina
 _isr88:
+    pushad
+    mov eax, 0x58
+    popad
     iret
 
 global _isr98
-; COMPLETAR: Implementar la rutina
 _isr98:
+    pushad
+    mov eax, 0x62
+    popad
     iret
 
 ; PushAD Order
