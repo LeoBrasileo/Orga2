@@ -12,6 +12,8 @@ extern screen_draw_layout
 extern IDT_DESC
 extern idt_init
 
+;xtern pic_rest
+;extern pic_enable
 
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
@@ -98,6 +100,9 @@ modo_protegido:
 
     lidt [IDT_DESC]
 
+    ;call pic_reset
+    ;call pic_enable
+    ;sti
     ; Inicializar pantalla
     call screen_draw_layout
    
