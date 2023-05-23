@@ -36,15 +36,14 @@
 #define GDT_OFF_NULL_DESC (GDT_IDX_NULL_DESC << 3)
 #define GDT_OFF_VIDEO  (GDT_IDX_VIDEO << 3)
 
-/* Valores para los selectores de segmento de la GDT 
- * Definirlos a partir de los índices de la GDT, definidos más arriba 
+/* Valores para los selectores de segmento de la GDT
+ * Definirlos a partir de los índices de la GDT, definidos más arriba
  * Hint: usar operadores "<<" y "|" (shift y or) */
-
-#define GDT_CODE_0_SEL GDT_IDX_CODE_0 << 3 // 0000000000001000
-#define GDT_DATA_0_SEL GDT_IDX_DATA_0 << 3 // 0000000000011000
-#define GDT_CODE_3_SEL GDT_IDX_CODE_3 << 3 | 0x03 // 0000000000010011
-#define GDT_DATA_3_SEL GDT_IDX_DATA_3 << 3 | 0x03 // 0000000000100011
-
+#define GDT_CODE_0_SEL (GDT_IDX_CODE_0 << 3)
+#define GDT_DATA_0_SEL (GDT_IDX_DATA_0 << 3)
+/* | simboliza el OR en bits. Dado que es nivel 3 precisamos que los últimos 2 bits sea el privilegio 0x3*/
+#define GDT_CODE_3_SEL ((GDT_OFF_CODE_3) | 0x3)
+#define GDT_DATA_3_SEL ((GDT_OFF_DATA_3) | 0x3)
 
 // Macros para trabajar con segmentos de la GDT.
 
@@ -60,16 +59,15 @@
 #define GDT_BASE_MID(base)  (uint8_t)((((uint32_t)(base)) >> 16) & 0xFF)
 #define GDT_BASE_HIGH(base) (uint8_t)((((uint32_t)(base)) >> 24) & 0xFF)
 
-/* Valores de atributos */ 
-#define DESC_CODE_DATA 0x01
-#define DESC_SYSTEM 0x00
 #define DESC_TYPE_EXECUTE_READ 0xA
 #define DESC_TYPE_READ_WRITE   0x2
+#define DESC_TYPE_32BIT_TSS    0x9
 
-/* COMPLETAR - Tamaños de segmentos */ 
-#define FLAT_SEGM_SIZE  0x7FFFFF
-#define VIDEO_SEGM_SIZE  ROWS*COLS*2
+#define DESC_CODE_DATA 1
+#define DESC_SYSTEM    0
 
+#define FLAT_SEGM_SIZE  (817U * (1 << 20))
+#define VIDEO_SEGM_SIZE (80U * 50 * 2)
 
 /* Direcciones de memoria */
 /* -------------------------------------------------------------------------- */
@@ -80,6 +78,43 @@
 #define KERNEL 0x00001200
 // direccion fisica del buffer de video
 #define VIDEO 0x000B8000
+// direccion fisica de la pagina de memoria compartida
+#define SHARED 0x0001D000
 
+
+/* MMU */
+/* -------------------------------------------------------------------------- */
+/* Definan:
+VIRT_PAGE_OFFSET(X) devuelve el offset dentro de la página, donde X es una dirección virtual
+VIRT_PAGE_TABLE(X)  devuelve la page table entry correspondiente, donde X es una dirección virtual
+VIRT_PAGE_DIR(X)    devuelve el page directory entry, donde X es una dirección virtual
+CR3_TO_PAGE_DIR(X)  devuelve el page directory, donde X es el contenido del registro CR3
+MMU_ENTRY_PADDR(X)  devuelve la dirección física de la base de un page frame o de un page table, donde X es el campo de 20 bits en una PTE o PDE
+
+#define VIRT_PAGE_OFFSET(X) ??
+#define VIRT_PAGE_TABLE(X)  ??
+#define VIRT_PAGE_DIR(X)    ??
+#define CR3_TO_PAGE_DIR(X)  ??
+#define MMU_ENTRY_PADDR(X)  ??
+
+*/
+
+#define MMU_P (1 << 0)
+#define MMU_W (1 << 1)
+#define MMU_U (1 << 2)
+
+#define PAGE_SIZE 4096
+
+// direccion virtual del codigo
+#define TASK_CODE_VIRTUAL 0x08000000
+#define TASK_CODE_PAGES   2
+#define TASK_STACK_BASE   0x08003000
+#define TASK_SHARED_PAGE  0x08003000
+
+/* Direcciones fisicas de directorios y tablas de paginas del KERNEL */
+/* -------------------------------------------------------------------------- */
+#define KERNEL_PAGE_DIR     (0x00025000)
+#define KERNEL_PAGE_TABLE_0 (0x00026000)
+#define KERNEL_STACK        (0x00025000)
 
 #endif //  __DEFINES_H__
