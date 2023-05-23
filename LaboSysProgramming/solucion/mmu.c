@@ -53,6 +53,7 @@ void mmu_init(void) {}
  * @return devuelve la dirección de memoria de comienzo de la próxima página libre de kernel
  */
 paddr_t mmu_next_free_kernel_page(void) {
+  return next_free_kernel_page;
 }
 
 /**
@@ -60,6 +61,7 @@ paddr_t mmu_next_free_kernel_page(void) {
  * @return devuelve la dirección de memoria de comienzo de la próxima página libre de usuarix
  */
 paddr_t mmu_next_free_user_page(void) {
+  return next_free_user_page;
 }
 
 /**
@@ -69,6 +71,9 @@ paddr_t mmu_next_free_user_page(void) {
  * de páginas usado por el kernel
  */
 paddr_t mmu_init_kernel_dir(void) {
+  int contEntry = 0;
+  const
+  while ()
 }
 
 /**
