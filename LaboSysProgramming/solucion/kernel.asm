@@ -95,9 +95,9 @@ modo_protegido:
     ; Imprimir mensaje de bienvenida - MODO PROTEGIDO
 
     print_text_pm start_pm_msg, start_pm_len, 0x0004, 0x0000, 0x0000
-
     ; Inicializar pantalla
     call screen_draw_layout
+    
 
     ; Inicializar la IDT
     call idt_init
