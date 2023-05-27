@@ -72,8 +72,8 @@ paddr_t mmu_next_free_user_page(void) {
  */
 paddr_t mmu_init_kernel_dir(void) {
   int contEntry = 0;
-  const
-  while ()
+  //const
+  //while ()
 }
 
 /**
