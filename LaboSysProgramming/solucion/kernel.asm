@@ -15,8 +15,13 @@ extern idt_init
 extern pic_reset
 extern pic_enable
 
+extern mmu_next_free_kernel_page
+extern mmu_next_free_user_page
+extern mmu_init_kernel_dir
+
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
+%define PAGE_DIRECTORY 0x25000
 
 
 BITS 16
@@ -97,7 +102,18 @@ modo_protegido:
     print_text_pm start_pm_msg, start_pm_len, 0x0004, 0x0000, 0x0000
     ; Inicializar pantalla
     call screen_draw_layout
+
+    ; Cargar direccion de directorio de paginas
+    mov eax, PAGE_DIRECTORY
+    mov cr3, eax
     
+    ; Activar paginado
+    mov eax, cr0
+    or eax, 0x80000001
+    mov cr0, eax
+    tlbflush
+
+    ;call mmu_init_kernel_dir
 
     ; Inicializar la IDT
     call idt_init

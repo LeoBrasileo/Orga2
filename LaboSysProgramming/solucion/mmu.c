@@ -53,6 +53,7 @@ void mmu_init(void) {}
  * @return devuelve la dirección de memoria de comienzo de la próxima página libre de kernel
  */
 paddr_t mmu_next_free_kernel_page(void) {
+  next_free_kernel_page += PAGE_SIZE;
   return next_free_kernel_page;
 }
 
@@ -61,6 +62,7 @@ paddr_t mmu_next_free_kernel_page(void) {
  * @return devuelve la dirección de memoria de comienzo de la próxima página libre de usuarix
  */
 paddr_t mmu_next_free_user_page(void) {
+  next_free_user_page += PAGE_SIZE;
   return next_free_user_page;
 }
 
@@ -71,9 +73,23 @@ paddr_t mmu_next_free_user_page(void) {
  * de páginas usado por el kernel
  */
 paddr_t mmu_init_kernel_dir(void) {
-  int contEntry = 0;
-  //const
-  //while ()
+  //identity mapping
+  uintptr_t actual = 0x00000000;
+  while (actual < identity_mapping_end)
+  {
+    // Hacer un casting del puntero actual a un puntero entero sin signo
+    uintptr_t* pageTableEntry = (uintptr_t*)actual;
+        
+    // Establecer el mapeo de identidad
+    *pageTableEntry = actual;
+        
+    // Avanzar al siguiente entry en la tabla de páginas
+    actual += PAGE_SIZE;
+  }
+  
+  zero_page((paddr_t)kpd);
+  zero_page((paddr_t)kpt);
+  return kpd;
 }
 
 /**
@@ -85,6 +101,10 @@ paddr_t mmu_init_kernel_dir(void) {
  * @param attrs los atributos a asignar en la entrada de la tabla de páginas
  */
 void mmu_map_page(uint32_t cr3, vaddr_t virt, paddr_t phy, uint32_t attrs) {
+  pd_entry_t* pageDirectory = CR3_TO_PAGE_DIR(cr3);
+  
+  int pd_index = VIRT_PAGE_DIR(virt);
+  int pt_index = VIRT_PAGE_TABLE(virt);
 }
 
 /**
