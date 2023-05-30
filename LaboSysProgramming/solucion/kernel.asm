@@ -103,18 +103,6 @@ modo_protegido:
     ; Inicializar pantalla
     call screen_draw_layout
 
-    ; Cargar direccion de directorio de paginas
-    mov eax, PAGE_DIRECTORY
-    mov cr3, eax
-    
-    ; Activar paginado
-    mov eax, cr0
-    or eax, 0x80000001
-    mov cr0, eax
-    tlbflush
-
-    ;call mmu_init_kernel_dir
-
     ; Inicializar la IDT
     call idt_init
 
@@ -123,6 +111,18 @@ modo_protegido:
     ; Inicializar los PIC
     call pic_reset
     call pic_enable
+
+
+    call mmu_init_kernel_dir ; al terminar se carga en eax la direccion del directorio de paginas
+    tlbflush
+
+    ; Cargar direccion de directorio de paginas
+    mov cr3, eax
+    
+    ; Activar paginado
+    mov eax, cr0
+    or eax, 0x80000001
+    mov cr0, eax
 
     ; Habilitar interrupciones
     sti

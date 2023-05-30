@@ -96,7 +96,7 @@ MMU_ENTRY_PADDR(X)  devuelve la dirección física de la base de un page frame o
 #define VIRT_PAGE_TABLE(X)  0x3FF & (X >> 12)
 #define VIRT_PAGE_DIR(X)    0x3FF & (X >> 22)
 #define CR3_TO_PAGE_DIR(X)  0xFFFFF & X
-#define MMU_ENTRY_PADDR(X)  0xFFFFF & X
+#define MMU_ENTRY_PADDR(X)  0x3FF & (X << 12)
 
 #define MMU_P (1 << 0)
 #define MMU_W (1 << 1)

@@ -53,8 +53,9 @@ void mmu_init(void) {}
  * @return devuelve la dirección de memoria de comienzo de la próxima página libre de kernel
  */
 paddr_t mmu_next_free_kernel_page(void) {
+  paddr_t res = next_free_kernel_page;
   next_free_kernel_page += PAGE_SIZE;
-  return next_free_kernel_page;
+  return res;
 }
 
 /**
@@ -62,8 +63,9 @@ paddr_t mmu_next_free_kernel_page(void) {
  * @return devuelve la dirección de memoria de comienzo de la próxima página libre de usuarix
  */
 paddr_t mmu_next_free_user_page(void) {
+  paddr_t res = next_free_user_page;
   next_free_user_page += PAGE_SIZE;
-  return next_free_user_page;
+  return res;
 }
 
 /**
@@ -73,22 +75,22 @@ paddr_t mmu_next_free_user_page(void) {
  * de páginas usado por el kernel
  */
 paddr_t mmu_init_kernel_dir(void) {
-  //identity mapping
-  uintptr_t actual = 0x00000000;
-  while (actual < identity_mapping_end)
-  {
-    // Hacer un casting del puntero actual a un puntero entero sin signo
-    uintptr_t* pageTableEntry = (uintptr_t*)actual;
-        
-    // Establecer el mapeo de identidad
-    *pageTableEntry = actual;
-        
-    // Avanzar al siguiente entry en la tabla de páginas
-    actual += PAGE_SIZE;
+  // Inicializar el directorio de páginas del kernel
+  for (int i = 0; i < 1024; i++) {
+    kpd[i].attrs = 0;
+    kpd[i].pt = 0;
   }
-  
-  zero_page((paddr_t)kpd);
-  zero_page((paddr_t)kpt);
+  // Inicializar las tablas de páginas del kernel
+  for (int i = 0; i < 1024; i++) {
+    kpt[i].attrs = 0;
+    kpt[i].page = i;
+  }
+  // Hacer identity mapping de 0x00000000 a 0x003FFFFF
+  for (int i = 0; i < identity_mapping_end; i += PAGE_SIZE) {
+    uintptr_t* pageTableEntry = (uintptr_t*)i;
+    *pageTableEntry = i;
+  }
+
   return kpd;
 }
 
