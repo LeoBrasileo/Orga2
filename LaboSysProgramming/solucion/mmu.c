@@ -75,20 +75,14 @@ paddr_t mmu_next_free_user_page(void) {
  * de páginas usado por el kernel
  */
 paddr_t mmu_init_kernel_dir(void) {
+  zero_page(KERNEL_PAGE_DIR);
   // Inicializar el directorio de páginas del kernel
-  for (int i = 0; i < 1024; i++) {
-    kpd[i].attrs = 0;
-    kpd[i].pt = 0;
-  }
+  kpd[0].attrs = MMU_P | MMU_W;
+  kpd[0].pt = KERNEL_PAGE_TABLE_0 >> 12;
   // Inicializar las tablas de páginas del kernel
   for (int i = 0; i < 1024; i++) {
-    kpt[i].attrs = 0;
-    kpt[i].page = i;
-  }
-  // Hacer identity mapping de 0x00000000 a 0x003FFFFF
-  for (int i = 0; i < identity_mapping_end; i += PAGE_SIZE) {
-    uintptr_t* pageTableEntry = (uintptr_t*)i;
-    *pageTableEntry = i;
+    kpt[i].attrs = MMU_P | MMU_W;
+    kpt[i].page = (i * PAGE_SIZE) >> 12;
   }
 
   return kpd;
