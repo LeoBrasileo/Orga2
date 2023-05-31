@@ -98,9 +98,19 @@ paddr_t mmu_init_kernel_dir(void) {
  */
 void mmu_map_page(uint32_t cr3, vaddr_t virt, paddr_t phy, uint32_t attrs) {
   pd_entry_t* pageDirectory = CR3_TO_PAGE_DIR(cr3);
-  
   int pd_index = VIRT_PAGE_DIR(virt);
+
+  if(pageDirectory[pd_index].attrs != MMU_P){
+    pageDirectory[pd_index].pt = (mmu_next_free_kernel_page() >> 12);
+    zero_page(pageDirectory[pd_index].pt << 12);
+    pageDirectory[pd_index].attrs = MMU_P;
+  }
+
   int pt_index = VIRT_PAGE_TABLE(virt);
+
+  pt_entry_t* pageTable = (pageDirectory[pd_index].pt << 12);
+  pageTable[pt_index].page = (phy >> 12);
+  pageTable[pt_index].attrs = attrs;
 }
 
 /**
@@ -109,7 +119,16 @@ void mmu_map_page(uint32_t cr3, vaddr_t virt, paddr_t phy, uint32_t attrs) {
  * @return la dirección física de la página desvinculada
  */
 paddr_t mmu_unmap_page(uint32_t cr3, vaddr_t virt) {
+  pd_entry_t* pageDirectory = CR3_TO_PAGE_DIR(cr3);
+  int pd_index = VIRT_PAGE_DIR(virt);
+  int pt_index = VIRT_PAGE_TABLE(virt);
 
+  pt_entry_t* pageTable = (pageDirectory[pd_index].pt << 12);
+  pageTable[pt_index].attrs = 0;
+  paddr_t page = pageTable[pt_index].page << 12;
+  pageTable[pt_index].page = 0;
+
+  return (page);
 }
 
 #define DST_VIRT_PAGE 0xA00000
@@ -124,6 +143,7 @@ paddr_t mmu_unmap_page(uint32_t cr3, vaddr_t virt) {
  * la copia y luego desmapea las páginas. Usar la función rcr3 definida en i386.h para obtener el cr3 actual
  */
 void copy_page(paddr_t dst_addr, paddr_t src_addr) {
+  
 }
 
  /**
