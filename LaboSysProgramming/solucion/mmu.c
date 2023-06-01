@@ -82,7 +82,7 @@ paddr_t mmu_init_kernel_dir(void) {
   // Inicializar las tablas de páginas del kernel
   for (int i = 0; i < 1024; i++) {
     kpt[i].attrs = MMU_P | MMU_W;
-    kpt[i].page = (i * PAGE_SIZE) >> 12;
+    kpt[i].page = i;
   }
 
   return kpd;
@@ -143,7 +143,20 @@ paddr_t mmu_unmap_page(uint32_t cr3, vaddr_t virt) {
  * la copia y luego desmapea las páginas. Usar la función rcr3 definida en i386.h para obtener el cr3 actual
  */
 void copy_page(paddr_t dst_addr, paddr_t src_addr) {
-  
+  uint32_t cr3 = rcr3();
+  pd_entry_t* pageDirectory = CR3_TO_PAGE_DIR(cr3);
+  // mapear ambas paginas
+  mmu_map_page(cr3, SRC_VIRT_PAGE, src_addr, MMU_P | MMU_W);
+  mmu_map_page(cr3, DST_VIRT_PAGE, dst_addr, MMU_P | MMU_W);
+
+  // copiar
+  for (int i = 0; i < PAGE_SIZE; i++) {
+    ((char*)dst_addr)[i] = ((char*)src_addr)[i];
+  }
+
+  // desmapear
+  mmu_unmap_page(cr3, SRC_VIRT_PAGE);
+  mmu_unmap_page(cr3, DST_VIRT_PAGE);
 }
 
  /**

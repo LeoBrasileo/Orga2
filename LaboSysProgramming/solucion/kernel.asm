@@ -15,9 +15,8 @@ extern idt_init
 extern pic_reset
 extern pic_enable
 
-extern mmu_next_free_kernel_page
-extern mmu_next_free_user_page
 extern mmu_init_kernel_dir
+extern copy_page
 
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
