@@ -132,6 +132,12 @@ modo_protegido:
     ; syscall int 98
     int 98
 
+    ; probamos copiar 0x000000 a 0x400000
+    push 0x000000
+    push 0x400000
+    call copy_page
+    add esp, 8
+
     ; Ciclar infinitamente 
     mov eax, 0xFFFF
     mov ebx, 0xFFFF

@@ -151,7 +151,7 @@ void copy_page(paddr_t dst_addr, paddr_t src_addr) {
 
   // copiar
   for (int i = 0; i < PAGE_SIZE; i++) {
-    ((char*)dst_addr)[i] = ((char*)src_addr)[i];
+    ((uint8_t*)DST_VIRT_PAGE)[i] = ((uint8_t*)SRC_VIRT_PAGE)[i];
   }
 
   // desmapear
