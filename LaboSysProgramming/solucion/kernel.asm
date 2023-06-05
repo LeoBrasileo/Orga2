@@ -17,6 +17,7 @@ extern pic_enable
 
 extern mmu_init_kernel_dir
 extern copy_page
+extern mmu_init_task_dir
 
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
@@ -35,6 +36,9 @@ start_rm_len equ    $ - start_rm_msg
 
 start_pm_msg db     'Iniciando kernel en Modo Protegido'
 start_pm_len equ    $ - start_pm_msg
+
+start_task_page db  'Iniciando tarea en pagina 0x400000'
+start_task_page_len equ $ - start_task_page
 
 ;;
 ;; Seccion de código.
@@ -137,6 +141,15 @@ modo_protegido:
     push 0x400000
     call copy_page
     add esp, 8
+
+    push 0x18000
+    call mmu_init_task_dir
+    add esp, 4
+
+    mov cr3, eax
+
+    print_text_pm start_task_page, start_task_page_len, 0x000C, 0x0005, 0x0000
+
 
     ; Ciclar infinitamente 
     mov eax, 0xFFFF

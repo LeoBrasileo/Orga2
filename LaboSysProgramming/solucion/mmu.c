@@ -20,6 +20,8 @@ static const uint32_t user_memory_pool_end = 0x02FFFFFF;
 static paddr_t next_free_kernel_page = 0x100000;
 static paddr_t next_free_user_page = 0x400000;
 
+static paddr_t shared_page = NULL;
+
 /**
  * kmemset asigna el valor c a un rango de memoria interpretado
  * como un rango de bytes de largo n que comienza en s
@@ -43,6 +45,8 @@ static inline void* kmemset(void* s, int c, size_t n) {
 static inline void zero_page(paddr_t addr) {
   kmemset((void*)addr, 0x00, PAGE_SIZE);
 }
+
+
 
 
 void mmu_init(void) {}
@@ -165,15 +169,31 @@ void copy_page(paddr_t dst_addr, paddr_t src_addr) {
  * @return el contenido que se ha de cargar en un registro CR3 para la tarea asociada a esta llamada
  */
 paddr_t mmu_init_task_dir(paddr_t phy_start) {
-  uint32_t cr3 = rcr3();
-  pd_entry_t* pageDirectory = CR3_TO_PAGE_DIR(cr3);
 
-  mmu_map_page(cr3, TASK_CODE_VIRTUAL, phy_start, MMU_P);
-  mmu_map_page(cr3, TASK_CODE_VIRTUAL + PAGE_SIZE, phy_start + PAGE_SIZE, MMU_P);
+  pd_entry_t* pageDirectory = mmu_next_free_kernel_page();
+  zero_page(pageDirectory);
 
-  mmu_map_page(cr3, TASK_STACK_BASE, mmu_next_free_user_page(), MMU_P | MMU_W);
+  pt_entry_t* pageTable = mmu_next_free_kernel_page();
+  zero_page(pageTable);
 
-  mmu_map_page(cr3, TASK_SHARED_PAGE, mmu_next_free_user_page(), MMU_P | MMU_W);
+  for (int i = 0; i < 1024; i++) {
+    pageTable[i].attrs = MMU_P | MMU_W;
+    pageTable[i].page = i;
+  }
 
-  return cr3;
+  pageDirectory[0].attrs = MMU_P | MMU_W;
+  pageDirectory[0].pt = (paddr_t) pageTable >> 12;
+
+  if (shared_page == NULL){
+    shared_page = mmu_next_free_user_page();
+  }
+
+  mmu_map_page(pageDirectory, TASK_STACK_BASE - PAGE_SIZE, mmu_next_free_user_page(), MMU_P | MMU_W);
+
+  mmu_map_page(pageDirectory, TASK_CODE_VIRTUAL, phy_start, MMU_P);
+  mmu_map_page(pageDirectory, TASK_CODE_VIRTUAL + PAGE_SIZE, phy_start + PAGE_SIZE, MMU_P);
+
+  mmu_map_page(pageDirectory, TASK_SHARED_PAGE, shared_page, MMU_P);
+
+  return (paddr_t) pageDirectory;
 }
