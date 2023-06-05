@@ -165,4 +165,15 @@ void copy_page(paddr_t dst_addr, paddr_t src_addr) {
  * @return el contenido que se ha de cargar en un registro CR3 para la tarea asociada a esta llamada
  */
 paddr_t mmu_init_task_dir(paddr_t phy_start) {
+  uint32_t cr3 = rcr3();
+  pd_entry_t* pageDirectory = CR3_TO_PAGE_DIR(cr3);
+
+  mmu_map_page(cr3, TASK_CODE_VIRTUAL, phy_start, MMU_P);
+  mmu_map_page(cr3, TASK_CODE_VIRTUAL + PAGE_SIZE, phy_start + PAGE_SIZE, MMU_P);
+
+  mmu_map_page(cr3, TASK_STACK_BASE, mmu_next_free_user_page(), MMU_P | MMU_W);
+
+  mmu_map_page(cr3, TASK_SHARED_PAGE, mmu_next_free_user_page(), MMU_P | MMU_W);
+
+  return cr3;
 }
