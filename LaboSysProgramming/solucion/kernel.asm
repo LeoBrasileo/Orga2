@@ -137,10 +137,10 @@ modo_protegido:
     int 98
 
     ; probamos copiar 0x000000 a 0x400000
-    push 0x000000
-    push 0x400000
-    call copy_page
-    add esp, 8
+    ;push 0x000000
+    ;push 0x400000
+    ;call copy_page
+    ;add esp, 8
 
     push 0x18000
     call mmu_init_task_dir
