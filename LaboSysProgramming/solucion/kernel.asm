@@ -19,6 +19,8 @@ extern mmu_init_kernel_dir
 extern copy_page
 extern mmu_init_task_dir
 
+extern tss_init
+
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
 %define PAGE_DIRECTORY 0x25000
@@ -127,6 +129,9 @@ modo_protegido:
     or eax, 0x80000000
     mov cr0, eax
 
+    ; Tareas iniciales
+    call tss_init
+
     ; Habilitar interrupciones
     sti
 
@@ -142,13 +147,11 @@ modo_protegido:
     ;call copy_page
     ;add esp, 8
 
-    push 0x18000
-    call mmu_init_task_dir
-    add esp, 4
-
-    mov cr3, eax
-
-    print_text_pm start_task_page, start_task_page_len, 0x000C, 0x0005, 0x0000
+    ;push 0x18000
+    ;call mmu_init_task_dir
+    ;add esp, 4
+    ;mov cr3, eax
+    ;print_text_pm start_task_page, start_task_page_len, 0x000C, 0x0005, 0x0000
 
 
     ; Ciclar infinitamente 

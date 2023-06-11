@@ -34,6 +34,7 @@ tss_t tss_idle = {
 // Lista de tss, de aquí se cargan (guardan) las tss al hacer un cambio de contexto
 tss_t tss_tasks[MAX_TASKS] = {0};
 
+// devuelve el segment selector para @tss
 gdt_entry_t tss_gdt_entry_for_task(tss_t* tss) {
   return (gdt_entry_t) {
     .g = 0,
@@ -74,7 +75,9 @@ tss_t tss_create_user_task(paddr_t code_start) {
   //COMPLETAR: a donde deberia apuntar la pila de nivel cero?
   vaddr_t esp0 = stack0 + ??;
 END*/
-  return (tss_t) {
+  uint32_t cr3 = mmu_init_task_dir(code_start);
+  return tss_initial;
+  /*return (tss_t) {
     .cr3 = cr3,
     .esp = stack,
     .ebp = stack,
@@ -88,16 +91,13 @@ END*/
     .ss0 = GDT_DATA_0_SEL,
     .esp0 = esp0,
     .eflags = EFLAGS_IF,
-  };
+  };*/
 }
 
 /**
  * Inicializa las primeras entradas de tss (inicial y idle)
  */
 void tss_init(void) {
-/*ENUNCIADO
-  // COMPLETAR
-  gdt[GDT_IDX_TASK_IDLE] = tss_gdt_entry_for_task(??);
-  gdt[GDT_IDX_TASK_INITIAL] = ??;
-END*/
+  gdt[GDT_IDX_TASK_IDLE] = tss_gdt_entry_for_task(&tss_idle);
+  gdt[GDT_IDX_TASK_INITIAL] = tss_gdt_entry_for_task(&tss_initial);
 }

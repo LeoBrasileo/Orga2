@@ -142,6 +142,7 @@ paddr_t mmu_unmap_page(uint32_t cr3, vaddr_t virt) {
   paddr_t page = pageTable[pt_index].page << 12;
   pageTable[pt_index].page = 0;
 
+  tlbflush();
   return (page);
 }
 
