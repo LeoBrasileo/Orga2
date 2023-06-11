@@ -119,7 +119,6 @@ modo_protegido:
 
 
     call mmu_init_kernel_dir ; al terminar se carga en eax la direccion del directorio de paginas
-    tlbflush
 
     ; Cargar direccion de directorio de paginas
     mov cr3, eax
@@ -129,17 +128,15 @@ modo_protegido:
     or eax, 0x80000000
     mov cr0, eax
 
-    ; Tareas iniciales
-    call tss_init
-
     ; Habilitar interrupciones
     sti
 
-    ; syscall int 88
-    int 88
+    ; Tareas iniciales
+    call tss_init
 
-    ; syscall int 98
-    int 98
+    ; syscall 88 y 98
+    ;int 88
+    ;int 98
 
     ; probamos copiar 0x000000 a 0x400000
     ;push 0x000000
