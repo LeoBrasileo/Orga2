@@ -153,11 +153,14 @@ _isr32:
     cmp ax, 0
     je .fin
 
+    ; comparamos el selector de tarea en la TR con el selector siguiente la tarea, si es igual no hacemos nada
     str bx
     cmp ax, bx
     je .fin
 
+    ; si no es igual, cargamos el selector de la tarea
     mov word [sched_task_selector], ax
+    ; salta a la tarea
     jmp far [sched_task_offset]
 
     .fin:
