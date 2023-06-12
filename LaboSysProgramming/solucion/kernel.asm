@@ -20,6 +20,7 @@ extern copy_page
 extern mmu_init_task_dir
 
 extern tss_init
+extern tasks_screen_draw
 
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
@@ -128,11 +129,13 @@ modo_protegido:
     or eax, 0x80000000
     mov cr0, eax
 
-    ; Habilitar interrupciones
-    sti
-
     ; Tareas iniciales
     call tss_init
+    call tasks_screen_draw
+    
+
+    ; Habilitar interrupciones
+    sti
 
     ; syscall 88 y 98
     ;int 88
