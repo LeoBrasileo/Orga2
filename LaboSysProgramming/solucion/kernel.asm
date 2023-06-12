@@ -23,6 +23,7 @@ extern tss_init
 extern tss_initial
 extern tss_idle
 extern tasks_screen_draw
+extern sched_init
 
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
@@ -139,11 +140,14 @@ modo_protegido:
     mov ax, INIT_TASK_SEL 
     ltr ax
 
+    ; Habilitar interrupciones
+    sti
+
+    call sched_init
+    
     ; cambio de tarea Idle
     jmp IDLE_TASK_SEL:0
 
-    ; Habilitar interrupciones
-    sti
 
     ; syscall 88 y 98
     ;int 88
