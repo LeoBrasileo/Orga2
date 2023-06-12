@@ -20,6 +20,8 @@ extern copy_page
 extern mmu_init_task_dir
 
 extern tss_init
+extern tss_initial
+extern tss_idle
 extern tasks_screen_draw
 
 %define CS_RING_0_SEL 0x08
@@ -132,7 +134,10 @@ modo_protegido:
     ; Tareas iniciales
     call tss_init
     call tasks_screen_draw
-    mov eax, 
+    ltr [tss_initial]
+
+    ; vamos a Idle
+    jmp ;completar
 
     ; Habilitar interrupciones
     sti
