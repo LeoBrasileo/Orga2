@@ -47,6 +47,12 @@
 *.img
 *.mod*
 *.cmd
+*.d
+*.tsk
+*.tsko
+kernel.sym
+.gdb_history
+diskette.img
 .tmp_versions/
 modules.order
 Module.symvers
