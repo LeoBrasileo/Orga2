@@ -124,7 +124,7 @@ modo_protegido:
     ; Cargar direccion de directorio de paginas
     mov cr3, eax
     
-    ; Activar paginado
+    ; Activar paginacion
     mov eax, cr0
     or eax, 0x80000000
     mov cr0, eax
@@ -132,7 +132,7 @@ modo_protegido:
     ; Tareas iniciales
     call tss_init
     call tasks_screen_draw
-    
+    mov eax, 
 
     ; Habilitar interrupciones
     sti
