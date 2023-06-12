@@ -26,6 +26,8 @@ extern tasks_screen_draw
 
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
+%define INIT_TASK_SEL 0x58
+%define IDLE_TASK_SEL 0x60
 %define PAGE_DIRECTORY 0x25000
 
 
@@ -134,10 +136,11 @@ modo_protegido:
     ; Tareas iniciales
     call tss_init
     call tasks_screen_draw
-    ltr [tss_initial]
+    mov ax, INIT_TASK_SEL 
+    ltr ax
 
-    ; vamos a Idle
-    jmp ;completar
+    ; cambio de tarea Idle
+    jmp IDLE_TASK_SEL:0
 
     ; Habilitar interrupciones
     sti
