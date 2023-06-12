@@ -76,8 +76,11 @@ tss_t tss_create_user_task(paddr_t code_start) {
   vaddr_t esp0 = stack0 + ??;
 END*/
   uint32_t cr3 = mmu_init_task_dir(code_start);
-  return tss_initial;
-  /*return (tss_t) {
+  vaddr_t stack = TASK_STACK_BASE;
+  vaddr_t code_virt = TASK_CODE_VIRTUAL;
+  vaddr_t stack0 = mmu_next_free_kernel_page();
+  vaddr_t esp0 = stack0 + PAGE_SIZE;
+  return (tss_t) {
     .cr3 = cr3,
     .esp = stack,
     .ebp = stack,
@@ -91,7 +94,7 @@ END*/
     .ss0 = GDT_DATA_0_SEL,
     .esp0 = esp0,
     .eflags = EFLAGS_IF,
-  };*/
+  };
 }
 
 /**
