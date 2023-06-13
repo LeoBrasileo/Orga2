@@ -20,10 +20,9 @@ extern copy_page
 extern mmu_init_task_dir
 
 extern tss_init
-extern tss_initial
-extern tss_idle
 extern tasks_screen_draw
 extern sched_init
+extern tasks_init
 
 %define CS_RING_0_SEL 0x08
 %define DS_RING_0_SEL 0x18   
@@ -136,15 +135,15 @@ modo_protegido:
 
     ; Tareas iniciales
     call tss_init
-    call tasks_screen_draw
     mov ax, INIT_TASK_SEL 
     ltr ax
 
-    ; Habilitar interrupciones
+    call tasks_init
+
+    ; Habilitar interrupciones y schedulling
+    call sched_init
     sti
 
-    call sched_init
-    
     ; cambio de tarea Idle
     jmp IDLE_TASK_SEL:0
 
@@ -161,8 +160,8 @@ modo_protegido:
 
     ;push 0x18000
     ;call mmu_init_task_dir
-    ;add esp, 4
     ;mov cr3, eax
+    ;add esp, 4
     ;print_text_pm start_task_page, start_task_page_len, 0x000C, 0x0005, 0x0000
 
 

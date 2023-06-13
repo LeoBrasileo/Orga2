@@ -17,6 +17,8 @@ sched_task_selector:   dw 0xFFFF
 ;; PIC
 extern pic_finish1
 
+extern process_scancode
+
 ;; Sched
 extern sched_next_task
 extern kernel_exception
@@ -172,7 +174,6 @@ _isr32:
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
 global _isr33
-; COMPLETAR: Implementar la rutina
 _isr33:
     pushad
     ; 1. Le decimos al PIC que vamos a atender la interrupción
@@ -180,6 +181,10 @@ _isr33:
     ; 2. Leemos la tecla desde el teclado y la procesamos
     in al, 0x60
     push eax
+    
+    ;si queremos activar el teclado en toda la pantalla usar process_scancode
+    ;call process_scancode
+
     call tasks_input_process
     add esp, 4
     popad
