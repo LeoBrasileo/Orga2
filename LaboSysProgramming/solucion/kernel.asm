@@ -113,8 +113,31 @@ modo_protegido:
     ; Inicializar pantalla
     call screen_draw_layout
 
-    ; Tareas iniciales
+    call mmu_init_kernel_dir ; al terminar se carga en eax la direccion del directorio de paginas
 
+    ; Cargar direccion de directorio de paginas
+    mov cr3, eax
+    
+    ; Activar paginacion
+    mov eax, cr0
+    or eax, 0x80000000
+    mov cr0, eax
+
+    ; probamos copiar 0x000000 a 0x400000
+    ;push 0x000000
+    ;push 0x400000
+    ;call copy_page
+    ;add esp, 8
+
+    ; prueba de mmu_init_task_dir
+    push 0x18000
+    call mmu_init_task_dir
+    mov cr3, eax
+    add esp, 4
+    ;print_text_pm start_task_page, start_task_page_len, 0x000C, 0x0005, 0x0000
+
+    call tss_init
+    call sched_init
 
     ; Inicializar la IDT
     call idt_init
@@ -125,46 +148,21 @@ modo_protegido:
     call pic_reset
     call pic_enable
 
-
-    call mmu_init_kernel_dir ; al terminar se carga en eax la direccion del directorio de paginas
-
-    ; Cargar direccion de directorio de paginas
-    mov cr3, eax
-    
-    ; Activar paginacion
-    mov eax, cr0
-    or eax, 0x80000000
-    mov cr0, eax
-    call tss_init
-    call sched_init
-
-    ; Habilitar interrupciones y schedulling
-    call tasks_init
-    sti
-
     mov ax, INIT_TASK_SEL 
     ltr ax
 
+    call tasks_init
+
+    ; Habilitar interrupciones
+    sti
+
     ; cambio de tarea Idle
-    jmp IDLE_TASK_SEL:0
+    jmp IDLE_TASK_SEL:0x0
 
 
     ; syscall 88 y 98
     ;int 88
     ;int 98
-
-    ; probamos copiar 0x000000 a 0x400000
-    ;push 0x000000
-    ;push 0x400000
-    ;call copy_page
-    ;add esp, 8
-
-    ;push 0x18000
-    ;call mmu_init_task_dir
-    ;mov cr3, eax
-    ;add esp, 4
-    ;print_text_pm start_task_page, start_task_page_len, 0x000C, 0x0005, 0x0000
-
 
     ; Ciclar infinitamente 
     mov eax, 0xFFFF

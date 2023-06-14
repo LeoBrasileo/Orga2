@@ -177,15 +177,16 @@ paddr_t mmu_init_task_dir(paddr_t phy_start) {
   paddr_t stackPage = mmu_next_free_user_page();
   zero_page(cr);
 
+  // identity mapping
   for(vaddr_t i = 0; i < identity_mapping_end; i += PAGE_SIZE){
-    mmu_map_page(cr, i, i, (MMU_P));
+    mmu_map_page(cr, i, i, (MMU_P | MMU_W));
   }
+
+  mmu_map_page(cr, TASK_STACK_BASE - PAGE_SIZE, stackPage, (MMU_W | MMU_P | MMU_U));
+  mmu_map_page(cr, TASK_SHARED_PAGE, SHARED, (MMU_P | MMU_U | MMU_W));
 
   mmu_map_page(cr, TASK_CODE_VIRTUAL, phy_start, (MMU_P | MMU_U));
   mmu_map_page(cr, TASK_CODE_VIRTUAL + PAGE_SIZE, phy_start + PAGE_SIZE, (MMU_P | MMU_U));
-
-  mmu_map_page(cr, TASK_STACK_BASE - PAGE_SIZE, stackPage, (MMU_W | MMU_P | MMU_U));
-  mmu_map_page(cr, TASK_SHARED_PAGE, SHARED, (MMU_P | MMU_U));
 
   return (paddr_t) cr;
 }
