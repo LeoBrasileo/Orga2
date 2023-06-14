@@ -118,5 +118,6 @@ uint16_t sched_next_task(void) {
 
   // En el peor de los casos no hay ninguna tarea viva. Usemos la idle como
   // selector.
+  
   return GDT_IDX_TASK_IDLE << 3;
 }

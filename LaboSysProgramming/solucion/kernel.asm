@@ -113,6 +113,9 @@ modo_protegido:
     ; Inicializar pantalla
     call screen_draw_layout
 
+    ; Tareas iniciales
+
+
     ; Inicializar la IDT
     call idt_init
 
@@ -132,17 +135,15 @@ modo_protegido:
     mov eax, cr0
     or eax, 0x80000000
     mov cr0, eax
-
-    ; Tareas iniciales
     call tss_init
-    mov ax, INIT_TASK_SEL 
-    ltr ax
-
-    call tasks_init
+    call sched_init
 
     ; Habilitar interrupciones y schedulling
-    call sched_init
+    call tasks_init
     sti
+
+    mov ax, INIT_TASK_SEL 
+    ltr ax
 
     ; cambio de tarea Idle
     jmp IDLE_TASK_SEL:0
