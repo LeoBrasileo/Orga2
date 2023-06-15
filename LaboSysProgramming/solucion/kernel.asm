@@ -30,6 +30,9 @@ extern tasks_init
 %define IDLE_TASK_SEL 0x60
 %define PAGE_DIRECTORY 0x25000
 
+; divisor del clock, bajar para mas rapidez
+%define DIVISOR 0x800
+
 
 BITS 16
 ;; Saltear seccion de datos
@@ -152,6 +155,15 @@ modo_protegido:
     ltr ax
 
     call tasks_init
+
+    ; El PIT (Programmable Interrupt Timer) corre a 1193182Hz.
+    ; Cada iteracion del clock decrementa un contador interno, cuando éste llega
+    ; a cero se emite la interrupción. El valor inicial es 0x0 que indica 65536,
+    ; es decir 18.206 Hz
+    mov ax, DIVISOR
+    out 0x40, al
+    rol ax, 8
+    out 0x40, al
 
     ; Habilitar interrupciones
     sti

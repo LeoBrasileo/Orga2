@@ -83,15 +83,6 @@
 
 
 /* MMU */
-/* -------------------------------------------------------------------------- */
-/* Definan:
-VIRT_PAGE_OFFSET(X) devuelve el offset dentro de la página, donde X es una dirección virtual
-VIRT_PAGE_TABLE(X)  devuelve la page table entry correspondiente, donde X es una dirección virtual
-VIRT_PAGE_DIR(X)    devuelve el page directory entry, donde X es una dirección virtual
-CR3_TO_PAGE_DIR(X)  devuelve el page directory, donde X es el contenido del registro CR3
-MMU_ENTRY_PADDR(X)  devuelve la dirección física de la base de un page frame o de un page table, donde X es el campo de 20 bits en una PTE o PDE
-
-*/
 #define VIRT_PAGE_OFFSET(X) 0xFFF & X
 #define VIRT_PAGE_TABLE(X)  0x3FF & (X >> 12)
 #define VIRT_PAGE_DIR(X)    0x3FF & (X >> 22)
