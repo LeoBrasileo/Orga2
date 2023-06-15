@@ -26,13 +26,15 @@ TASKSCFLAGS=$(CFLAGS) -DORGA2__TAREA__
 TASKIDLE=idle.tsk
 TASKA=taskPong.tsk
 TASKB=taskSnake.tsk
+TASKC=taskGameOfLife.tsk
+TASKD=taskTipear.tsk
 
 TASKS=tareas.tsk
 
-TASKSBINS=$(TASKIDLE) $(TASKA) $(TASKB)
+TASKSBINS=$(TASKIDLE) $(TASKA) $(TASKB) $(TASKC) $(TASKD)
 
 CODESIZE=$$((0x18000 - 0x1200))
-TASKSSIZE=$$((2 * (0x1000) * 2 + 0x1000)) # Dos tareas de 2 paginas + 1 pagina idle.
+TASKSSIZE=$$((2 * (0x1000) * 5 + 0x1000)) # Dos tareas de 2 paginas + 1 pagina idle.
 KERNELSIZE=$$(($(CODESIZE)+$(TASKSSIZE)))
 
 # Direccion virtual donde empieza el codigo de las tareas.
@@ -118,6 +120,8 @@ tasks: $(TASKSBINS)
 	$(QUIET) dd if=$(TASKA)   bs=1 count=8K of=$(TASKS) seek=0K   status=noxfer > /dev/null 2>&1
 	$(QUIET) dd if=$(TASKB)   bs=1 count=8K of=$(TASKS) seek=8K  status=noxfer > /dev/null 2>&1
 	$(QUIET) dd if=$(TASKIDLE) bs=1 count=4K of=$(TASKS) seek=16K  status=noxfer > /dev/null 2>&1
+	$(QUIET) dd if=$(TASKC)   bs=1 count=8K of=$(TASKS) seek=24K   status=noxfer > /dev/null 2>&1
+	$(QUIET) dd if=$(TASKD)   bs=1 count=8K of=$(TASKS) seek=32K  status=noxfer > /dev/null 2>&1
 	@echo ''
 
 clean:

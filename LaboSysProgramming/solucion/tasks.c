@@ -24,15 +24,19 @@ void tasks_screen_draw();
 typedef enum {
   TASK_A = 0,
   TASK_B = 1,
+  TASK_C = 2,
+  TASK_D = 3
 } tipo_e;
 
 /**
  * Array que nos permite mapear un tipo de tarea a la dirección física de su
  * código.
  */
-static paddr_t task_code_start[2] = {
+static paddr_t task_code_start[4] = {
     [TASK_A] = TASK_A_CODE_START,
     [TASK_B] = TASK_B_CODE_START,
+    [TASK_C] = TASK_C_CODE_START,
+    [TASK_D] = TASK_D_CODE_START,
 };
 
 /**
@@ -64,13 +68,13 @@ void tasks_init(void) {
   // Creamos las tareas de tipo A
   task_id = create_task(TASK_A);
   sched_enable_task(task_id);
-  task_id = create_task(TASK_A);
+  task_id = create_task(TASK_C);
   sched_enable_task(task_id);
 
   // Creamos las tareas de tipo B
   task_id = create_task(TASK_B);
   sched_enable_task(task_id);
-  task_id = create_task(TASK_B);
+  task_id = create_task(TASK_D);
   sched_enable_task(task_id);
 }
 
